@@ -24,6 +24,8 @@ setup(name='nnunet',
             "nibabel", 
             "tifffile", 
             "matplotlib",
+            "GradCache @ git+https://github.com/liamchalcroft/GradCache.git",
+            "solo-learn @ git+https://github.com/vturrisi/solo-learn.git",
       ],
       entry_points={
           'console_scripts': [
