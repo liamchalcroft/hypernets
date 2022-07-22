@@ -66,6 +66,7 @@ class ContrastivePreTrainer(NetworkPreTrainer):
         self.freeze_encoder = freeze_encoder
         self.freeze_decoder = freeze_decoder
         self.detcon = None
+        self.extractor = True
 
         self.plans = None
 
@@ -278,28 +279,28 @@ class ContrastivePreTrainer(NetworkPreTrainer):
     #     ret = super().run_training()
     #     return ret
 
-    def plot_network_architecture(self):
-        try:
-            from batchgenerators.utilities.file_and_folder_operations import join
-            import hiddenlayer as hl
-            if torch.cuda.is_available():
-                g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)).cuda(),
-                                   transforms=None)
-            else:
-                g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)),
-                                   transforms=None)
-            g.save(join(self.output_folder, "network_architecture.pdf"))
-            del g
-        except Exception as e:
-            self.print_to_log_file("Unable to plot network architecture:")
-            self.print_to_log_file(e)
+    # def plot_network_architecture(self):
+    #     try:
+    #         from batchgenerators.utilities.file_and_folder_operations import join
+    #         import hiddenlayer as hl
+    #         if torch.cuda.is_available():
+    #             g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)).cuda(),
+    #                                transforms=None)
+    #         else:
+    #             g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)),
+    #                                transforms=None)
+    #         g.save(join(self.output_folder, "network_architecture.pdf"))
+    #         del g
+    #     except Exception as e:
+    #         self.print_to_log_file("Unable to plot network architecture:")
+    #         self.print_to_log_file(e)
 
-            self.print_to_log_file("\nprinting the network instead:\n")
-            self.print_to_log_file(self.network)
-            self.print_to_log_file("\n")
-        finally:
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+    #         self.print_to_log_file("\nprinting the network instead:\n")
+    #         self.print_to_log_file(self.network)
+    #         self.print_to_log_file("\n")
+    #     finally:
+    #         if torch.cuda.is_available():
+    #             torch.cuda.empty_cache()
 
     def save_debug_information(self):
         # saving some debug information
@@ -490,6 +491,7 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
         self.freeze_encoder = freeze_encoder
         self.freeze_decoder = freeze_decoder
         self.detcon = None
+        self.extractor = True
 
         self.plans = None
 
@@ -710,28 +712,28 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
     #     ret = super().run_training()
     #     return ret
 
-    def plot_network_architecture(self):
-        try:
-            from batchgenerators.utilities.file_and_folder_operations import join
-            import hiddenlayer as hl
-            if torch.cuda.is_available():
-                g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)).cuda(),
-                                   transforms=None)
-            else:
-                g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)),
-                                   transforms=None)
-            g.save(join(self.output_folder, "network_architecture.pdf"))
-            del g
-        except Exception as e:
-            self.print_to_log_file("Unable to plot network architecture:")
-            self.print_to_log_file(e)
+    # def plot_network_architecture(self):
+    #     try:
+    #         from batchgenerators.utilities.file_and_folder_operations import join
+    #         import hiddenlayer as hl
+    #         if torch.cuda.is_available():
+    #             g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)).cuda(),
+    #                                transforms=None)
+    #         else:
+    #             g = hl.build_graph(self.network, torch.rand((1, self.num_input_channels, *self.patch_size)),
+    #                                transforms=None)
+    #         g.save(join(self.output_folder, "network_architecture.pdf"))
+    #         del g
+    #     except Exception as e:
+    #         self.print_to_log_file("Unable to plot network architecture:")
+    #         self.print_to_log_file(e)
 
-            self.print_to_log_file("\nprinting the network instead:\n")
-            self.print_to_log_file(self.network)
-            self.print_to_log_file("\n")
-        finally:
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+    #         self.print_to_log_file("\nprinting the network instead:\n")
+    #         self.print_to_log_file(self.network)
+    #         self.print_to_log_file("\n")
+    #     finally:
+    #         if torch.cuda.is_available():
+    #             torch.cuda.empty_cache()
 
     def save_debug_information(self):
         # saving some debug information

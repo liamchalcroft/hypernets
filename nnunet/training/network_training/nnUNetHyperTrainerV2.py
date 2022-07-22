@@ -42,9 +42,9 @@ class nnUNetHyperTrainerV2(nnUNetHyperTrainer):
     """
 
     def __init__(self, plans_file, fold, output_folder=None, dataset_directory=None, batch_dice=True, stage=None,
-                 unpack_data=True, deterministic=True, fp16=False, hyper_depth=None):
+                 unpack_data=True, deterministic=True, fp16=False, hyper_depth=None, meta_dim=None):
         super().__init__(plans_file, fold, output_folder, dataset_directory, batch_dice, stage, unpack_data,
-                         deterministic, fp16, hyper_depth)
+                         deterministic, fp16, hyper_depth, meta_dim)
         self.max_num_epochs = 1000
         self.deep_supervision_scales = None
         self.ds_loss_weights = None

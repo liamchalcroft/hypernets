@@ -19,7 +19,7 @@ import sys
 
 import matplotlib
 from batchgenerators.utilities.file_and_folder_operations import *
-from ssunet.network_architecture.neural_network import SegmentationNetwork
+from nnunet.network_architecture.neural_network import SegmentationNetwork
 from torch import nn
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import _LRScheduler
@@ -36,7 +36,8 @@ import torch.backends.cudnn as cudnn
 from abc import abstractmethod
 from datetime import datetime
 from tqdm import trange
-from ssunet.utilities.to_torch import maybe_to_torch, to_cuda
+from nnunet.utilities.to_torch import maybe_to_torch, to_cuda
+from nnunet.network_architecture.custom_modules.hyper import HyperNet
 
 from grad_cache.functional import cached, cat_input_tensor
 from solo.utils.knn import WeightedKNNClassifier
@@ -63,7 +64,7 @@ class GradCachePreTrainer(object):
         self.clip_grad = None
         self.freeze_encoder = False
         self.freeze_decoder = False
-        self.extractor = False
+        self.extractor = True
         self.noisevec = False
         self.detcon = None
         self.metabatch = 1

@@ -190,7 +190,8 @@ class Generic_UNet(SegmentationNetwork):
                  conv_kernel_sizes=None,
                  upscale_logits=False, convolutional_pooling=False, convolutional_upsampling=False,
                  max_num_features=None, basic_block=ConvDropoutNormNonlin,
-                 seg_output_use_bias=False):
+                 seg_output_use_bias=False,
+                 freeze_encoder=False, freeze_decoder=False, extractor=False):
         """
         basically more flexible than v1, architecture is the same
 
@@ -225,6 +226,10 @@ class Generic_UNet(SegmentationNetwork):
         self.final_nonlin = final_nonlin
         self._deep_supervision = deep_supervision
         self.do_ds = deep_supervision
+
+        self.freeze_encoder = freeze_encoder
+        self.freeze_decoder = freeze_decoder
+        self.extractor = extractor
 
         if conv_op == nn.Conv2d:
             upsample_mode = 'bilinear'
@@ -395,11 +400,14 @@ class Generic_UNet(SegmentationNetwork):
 
         x = self.conv_blocks_context[-1](x)
 
-        for u in range(len(self.tu)):
-            x = self.tu[u](x)
-            x = torch.cat((x, skips[-(u + 1)]), dim=1)
-            x = self.conv_blocks_localization[u](x)
-            seg_outputs.append(self.final_nonlin(self.seg_outputs[u](x)))
+        if self.extractor: # return output at end of encoder - useful for e.g. BYOL, SimCLR...
+            return x
+        else:
+            for u in range(len(self.tu)):
+                x = self.tu[u](x)
+                x = torch.cat((x, skips[-(u + 1)]), dim=1)
+                x = self.conv_blocks_localization[u](x)
+                seg_outputs.append(self.final_nonlin(self.seg_outputs[u](x)))
 
         if self._deep_supervision and self.do_ds:
             return tuple([seg_outputs[-1]] + [i(j) for i, j in

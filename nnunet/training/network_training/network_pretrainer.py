@@ -18,7 +18,7 @@ from typing import Tuple
 
 import matplotlib
 from batchgenerators.utilities.file_and_folder_operations import *
-from ssunet.network_architecture.neural_network import SegmentationNetwork
+from nnunet.network_architecture.neural_network import SegmentationNetwork
 from torch import nn
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import _LRScheduler
@@ -36,6 +36,7 @@ from abc import abstractmethod
 from datetime import datetime
 from tqdm import trange
 from nnunet.utilities.to_torch import maybe_to_torch, to_cuda
+from nnunet.network_architecture.custom_modules.hyper import HyperNet
 
 from solo.utils.knn import WeightedKNNClassifier
 

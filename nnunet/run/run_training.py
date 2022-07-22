@@ -22,6 +22,17 @@ from nnunet.training.network_training.nnUNetHyperTrainer import nnUNetHyperTrain
 from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
 
 
+class ParseKwargs(argparse.Action):
+    """
+    Credit to https://sumit-ghosh.com/articles/parsing-dictionary-key-value-pairs-kwargs-argparse-python/
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, dict())
+        for value in values:
+            key, value = value.split('=')
+            getattr(namespace, self.dest)[key] = value
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("network")
@@ -29,6 +40,8 @@ def main():
     parser.add_argument("task", help="can be task name or task id")
     parser.add_argument("fold", help='0, 1, ..., 5 or \'all\'')
     parser.add_argument("-hyper", "--hyper_depth", help="Encoder depth to control with hypernetworks",
+                        default=None, required=False)
+    parser.add_argument("-meta", "--meta_dim", help="Dimensions of metadata for hypernetworks.",
                         default=None, required=False)
     parser.add_argument("-val", "--validation_only", help="use this if you want to only run the validation",
                         action="store_true")
@@ -88,6 +101,8 @@ def main():
                         help='path to nnU-Net checkpoint file to be used as pretrained model (use .model '
                              'file, for example model_final_checkpoint.model). Will only be used when actually training. '
                              'Optional. Beta. Use with caution.')
+    parser.add_argument('-k', '--kwargs', nargs='*', action=ParseKwargs,
+                        help="Any further arguments to pass to Trainer, such as method-specific hyperparams, or metabatch for gradient cache.")
 
     args = parser.parse_args()
 
@@ -100,6 +115,8 @@ def main():
     find_lr = args.find_lr
     disable_postprocessing_on_folds = args.disable_postprocessing_on_folds
     hyper_depth = args.hyper_depth
+    meta_dim = args.meta_dim
+    kwargs = args.kwargs
 
     use_compressed_data = args.use_compressed_data
     decompress_data = not use_compressed_data
@@ -139,13 +156,32 @@ def main():
     if trainer_class is None:
         raise RuntimeError("Could not find trainer class in nnunet.training.network_training")
 
-    assert issubclass(trainer_class,
-                          nnUNetHyperTrainer), "network_trainer was found but is not derived from nnUNetHyperTrainer"
+    if kwargs is not None:
+        print('Using additional kwargs: ')
+        for key in kwargs.keys():
+            print(key+': ', kwargs[key])
+        if issubclass(trainer_class, nnUNetHyperTrainer):
+            trainer = trainer_class(plans_file, fold, output_folder=output_folder_name, dataset_directory=dataset_directory,
+                                    batch_dice=batch_dice, stage=stage, unpack_data=decompress_data,
+                                    deterministic=deterministic,
+                                    fp16=run_mixed_precision, hyper_depth=hyper_depth, meta_dim=meta_dim, **kwargs)
+        else:
+            trainer = trainer_class(plans_file, output_folder=output_folder_name, dataset_directory=dataset_directory,
+                                    unpack_data=decompress_data,
+                                    deterministic=deterministic,
+                                    fp16=run_mixed_precision, hyper_depth=hyper_depth, meta_dim=meta_dim, **kwargs)
+    else:
+        if issubclass(trainer_class, nnUNetHyperTrainer):
+            trainer = trainer_class(plans_file, fold, output_folder=output_folder_name, dataset_directory=dataset_directory,
+                                    batch_dice=batch_dice, stage=stage, unpack_data=decompress_data,
+                                    deterministic=deterministic,
+                                    fp16=run_mixed_precision, hyper_depth=hyper_depth, meta_dim=meta_dim)
+        else:
+            trainer = trainer_class(plans_file, output_folder=output_folder_name, dataset_directory=dataset_directory,
+                                    unpack_data=decompress_data,
+                                    deterministic=deterministic,
+                                    fp16=run_mixed_precision, hyper_depth=hyper_depth, meta_dim=meta_dim)
 
-    trainer = trainer_class(plans_file, fold, output_folder=output_folder_name, dataset_directory=dataset_directory,
-                            batch_dice=batch_dice, stage=stage, unpack_data=decompress_data,
-                            deterministic=deterministic,
-                            fp16=run_mixed_precision, hyper_depth=hyper_depth)
     if args.disable_saving:
         trainer.save_final_checkpoint = False # whether or not to save the final checkpoint
         trainer.save_best_checkpoint = False  # whether or not to save the best checkpoint according to

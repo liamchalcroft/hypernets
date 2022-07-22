@@ -47,7 +47,7 @@ matplotlib.use("agg")
 
 class nnUNetHyperTrainer(HyperNetworkTrainer):
     def __init__(self, plans_file, fold, output_folder=None, dataset_directory=None, batch_dice=True, stage=None,
-                 unpack_data=True, deterministic=True, fp16=False, hyper_depth=None):
+                 unpack_data=True, deterministic=True, fp16=False, hyper_depth=None, meta_dim=None):
         """
         :param deterministic:
         :param fold: can be either [0 ... 5) for cross-validation, 'all' to train on all available training data or
@@ -72,7 +72,7 @@ class nnUNetHyperTrainer(HyperNetworkTrainer):
         IMPORTANT: If you inherit from nnUNetTrainer and the init args change then you need to redefine self.init_args
         in your init accordingly. Otherwise checkpoints won't load properly!
         """
-        super(nnUNetHyperTrainer, self).__init__(deterministic, fp16, hyper_depth)
+        super(nnUNetHyperTrainer, self).__init__(deterministic, fp16, hyper_depth, meta_dim)
         self.unpack_data = unpack_data
         self.init_args = (plans_file, fold, output_folder, dataset_directory, batch_dice, stage, unpack_data,
                           deterministic, fp16)
