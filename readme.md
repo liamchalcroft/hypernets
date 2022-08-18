@@ -110,7 +110,7 @@ the highest CUDA version compatible with your drivers for maximum performance.
 
     2) For use as integrative **framework** (this will create a copy of the hypunet code on your computer so that you can modify it as needed):
           ```bash
-          git clone https://github.com/MIC-DKFZ/hypunet.git
+          git clone https://github.com/liamchalcroft/hypunet.git
           cd hypunet
           pip install -e .
           ```
