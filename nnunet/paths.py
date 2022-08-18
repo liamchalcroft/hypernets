@@ -35,15 +35,15 @@ if base is not None:
     maybe_mkdir_p(hypunet_raw_data)
     maybe_mkdir_p(hypunet_cropped_data)
 else:
-    print("hypunet_raw_data_base is not defined and nnU-Net can only be used on data for which preprocessed files "
-          "are already present on your system. nnU-Net cannot be used for experiment planning and preprocessing like "
+    print("hypunet_raw_data_base is not defined and hypunet can only be used on data for which preprocessed files "
+          "are already present on your system. hypunet cannot be used for experiment planning and preprocessing like "
           "this. If this is not intended, please read documentation/setting_up_paths.md for information on how to set this up properly.")
     hypunet_cropped_data = hypunet_raw_data = None
 
 if preprocessing_output_dir is not None:
     maybe_mkdir_p(preprocessing_output_dir)
 else:
-    print("hypunet_preprocessed is not defined and nnU-Net can not be used for preprocessing "
+    print("hypunet_preprocessed is not defined and hypunet can not be used for preprocessing "
           "or training. If this is not intended, please read documentation/setting_up_paths.md for information on how to set this up.")
     preprocessing_output_dir = None
 
@@ -51,7 +51,7 @@ if network_training_output_dir_base is not None:
     network_training_output_dir = join(network_training_output_dir_base, my_output_identifier)
     maybe_mkdir_p(network_training_output_dir)
 else:
-    print("RESULTS_FOLDER is not defined and nnU-Net cannot be used for training or "
+    print("RESULTS_FOLDER is not defined and hypunet cannot be used for training or "
           "inference. If this is not intended behavior, please read documentation/setting_up_paths.md for information on how to set this "
           "up.")
     network_training_output_dir = None

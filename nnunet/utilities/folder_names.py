@@ -20,7 +20,7 @@ from hypunet.paths import network_training_output_dir
 def get_output_folder_name(model: str, task: str = None, trainer: str = None, plans: str = None, fold: int = None,
                            overwrite_training_output_dir: str = None):
     """
-    Retrieves the correct output directory for the nnU-Net model described by the input parameters
+    Retrieves the correct output directory for the hypunet model described by the input parameters
 
     :param model:
     :param task:

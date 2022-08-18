@@ -5,7 +5,7 @@ several datasets and tips on how to identify bottlenecks](documentation/expected
 Please read these documents before opening a new issue!
 
 
-# nnU-Net
+# hypunet
 
 In 3D biomedical image segmentation, dataset properties like imaging modality, image sizes, voxel spacings, class
 ratios etc vary drastically.
@@ -24,37 +24,37 @@ turn affects the required receptive field of the network, a factor that itself i
 hyperparameters in the pipeline. As a result, pipelines that were developed on one (type of) dataset are inherently
 incomaptible with other datasets in the domain.
 
-**nnU-Net is the first segmentation method that is designed to deal with the dataset diversity found in the domain. It
+**hypunet is the first segmentation method that is designed to deal with the dataset diversity found in the domain. It
 condenses and automates the keys decisions for designing a successful segmentation pipeline for any given dataset.**
 
-nnU-Net makes the following contributions to the field:
+hypunet makes the following contributions to the field:
 
-1. **Standardized baseline:** nnU-Net is the first standardized deep learning benchmark in biomedical segmentation.
-   Without manual effort, researchers can compare their algorithms against nnU-Net on an arbitrary number of datasets
+1. **Standardized baseline:** hypunet is the first standardized deep learning benchmark in biomedical segmentation.
+   Without manual effort, researchers can compare their algorithms against hypunet on an arbitrary number of datasets
    to provide meaningful evidence for proposed improvements.
-2. **Out-of-the-box segmentation method:** nnU-Net is the first plug-and-play tool for state-of-the-art biomedical
-   segmentation. Inexperienced users can use nnU-Net out of the box for their custom 3D segmentation problem without
+2. **Out-of-the-box segmentation method:** hypunet is the first plug-and-play tool for state-of-the-art biomedical
+   segmentation. Inexperienced users can use hypunet out of the box for their custom 3D segmentation problem without
    need for manual intervention.
-3. **Framework:** nnU-Net is a framework for fast and effective development of segmentation methods. Due to its modular
-   structure, new architectures and methods can easily be integrated into nnU-Net. Researchers can then benefit from its
+3. **Framework:** hypunet is a framework for fast and effective development of segmentation methods. Due to its modular
+   structure, new architectures and methods can easily be integrated into hypunet. Researchers can then benefit from its
    generic nature to roll out and evaluate their modifications on an arbitrary number of datasets in a
    standardized environment.
 
-For more information about nnU-Net, please read the following paper:
+For more information about hypunet, please read the following paper:
 
 
-    Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2020). nnU-Net: a self-configuring method 
+    Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2020). hypunet: a self-configuring method 
     for deep learning-based biomedical image segmentation. Nature Methods, 1-9.
 
-Please also cite this paper if you are using nnU-Net for your research!
+Please also cite this paper if you are using hypunet for your research!
 
 
 # Table of Contents
-- [nnU-Net](#nnu-net)
+- [hypunet](#hypunet)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [How to run nnU-Net on a new dataset](#how-to-run-nnu-net-on-a-new-dataset)
+  - [How to run hypunet on a new dataset](#how-to-run-hypunet-on-a-new-dataset)
     - [Dataset conversion](#dataset-conversion)
     - [Experiment planning and preprocessing](#experiment-planning-and-preprocessing)
     - [Model training](#model-training)
@@ -68,7 +68,7 @@ Please also cite this paper if you are using nnU-Net for your research!
     - [Run inference](#run-inference)
   - [How to run inference with pretrained models](#how-to-run-inference-with-pretrained-models)
   - [Examples](#examples)
-- [Extending or Changing nnU-Net](#extending-or-changing-nnu-net)
+- [Extending or Changing hypunet](#extending-or-changing-hypunet)
 - [Information on run time and potential performance bottlenecks.](#information-on-run-time-and-potential-performance-bottlenecks)
 - [Common questions and issues](#common-questions-and-issues)
 - [Useful Resources](#useful-resources)
@@ -76,17 +76,17 @@ Please also cite this paper if you are using nnU-Net for your research!
 
 
 # Installation
-nnU-Net has been tested on Linux (Ubuntu 16, 18 and 20; centOS, RHEL). We do not provide support for other operating
+hypunet has been tested on Linux (Ubuntu 16, 18 and 20; centOS, RHEL). We do not provide support for other operating
 systems.
 
-nnU-Net requires a GPU! For inference, the GPU should have 4 GB of VRAM. For training nnU-Net models the GPU should have at
+hypunet requires a GPU! For inference, the GPU should have 4 GB of VRAM. For training hypunet models the GPU should have at
 least 10 GB (popular non-datacenter options are the RTX 2080ti, RTX 3080 or RTX 3090). 
 
 For training, we recommend a strong CPU to go along with the GPU. At least 6 CPU cores (12 threads) are recommended. CPU
 requirements are mostly related to data augmentation and scale with the number of input channels. They are thus higher
 for datasets like BraTS which use 4 image modalities and lower for datasets like LiTS which only uses CT images.
 
-We very strongly recommend you install nnU-Net in a virtual environment.
+We very strongly recommend you install hypunet in a virtual environment.
 [Here is a quick how-to for Ubuntu.](https://linoxide.com/linux-how-to/setup-python-virtual-environment-ubuntu/)
 If you choose to compile pytorch from source, you will need to use conda instead of pip. In that case, please set the
 environment variable OMP_NUM_THREADS=1 (preferably in your bashrc using `export OMP_NUM_THREADS=1`). This is important!
@@ -103,54 +103,54 @@ the highest CUDA version compatible with your drivers for maximum performance.
     python -c 'import torch;print(torch.__version__)'   
     ```
    This should print `8200` and `1.11.0+cu113` (Apr 1st 2022)
-3) Install nnU-Net depending on your use case:
+3) Install hypunet depending on your use case:
     1) For use as **standardized baseline**, **out-of-the-box segmentation algorithm** or for running **inference with pretrained models**:
 
        ```pip install hypunet```
 
-    2) For use as integrative **framework** (this will create a copy of the nnU-Net code on your computer so that you can modify it as needed):
+    2) For use as integrative **framework** (this will create a copy of the hypunet code on your computer so that you can modify it as needed):
           ```bash
           git clone https://github.com/MIC-DKFZ/hypunet.git
           cd hypunet
           pip install -e .
           ```
-4) nnU-Net needs to know where you intend to save raw data, preprocessed data and trained models. For this you need to
+4) hypunet needs to know where you intend to save raw data, preprocessed data and trained models. For this you need to
    set a few of environment variables. Please follow the instructions [here](documentation/setting_up_paths.md).
-5) (OPTIONAL) Install [hiddenlayer](https://github.com/waleedka/hiddenlayer). hiddenlayer enables nnU-net to generate
+5) (OPTIONAL) Install [hiddenlayer](https://github.com/waleedka/hiddenlayer). hiddenlayer enables hypunet to generate
    plots of the network topologies it generates (see [Model training](#model-training)). To install hiddenlayer,
    run the following commands:
     ```bash
     pip install --upgrade git+https://github.com/FabianIsensee/hiddenlayer.git@more_plotted_details#egg=hiddenlayer
     ```
 
-Installing nnU-Net will add several new commands to your terminal. These commands are used to run the entire nnU-Net
-pipeline. You can execute them from any location on your system. All nnU-Net commands have the prefix `hypunet_` for
+Installing hypunet will add several new commands to your terminal. These commands are used to run the entire hypunet
+pipeline. You can execute them from any location on your system. All hypunet commands have the prefix `hypunet_` for
 easy identification.
 
-Note that these commands simply execute python scripts. If you installed nnU-Net in a virtual environment, this
+Note that these commands simply execute python scripts. If you installed hypunet in a virtual environment, this
 environment must be activated when executing the commands.
 
-All nnU-Net commands have a `-h` option which gives information on how to use them.
+All hypunet commands have a `-h` option which gives information on how to use them.
 
-A typical installation of nnU-Net can be completed in less than 5 minutes. If pytorch needs to be compiled from source
+A typical installation of hypunet can be completed in less than 5 minutes. If pytorch needs to be compiled from source
 (which is what we currently recommend when using Turing GPUs), this can extend to more than an hour.
 
 # Usage
-To familiarize yourself with nnU-Net we recommend you have a look at the [Examples](#Examples) before you start with
+To familiarize yourself with hypunet we recommend you have a look at the [Examples](#Examples) before you start with
 your own dataset.
 
-## How to run nnU-Net on a new dataset
-Given some dataset, nnU-Net fully automatically configures an entire segmentation pipeline that matches its properties.
-nnU-Net covers the entire pipeline, from preprocessing to model configuration, model training, postprocessing
-all the way to ensembling. After running nnU-Net, the trained model(s) can be applied to the test cases for inference.
+## How to run hypunet on a new dataset
+Given some dataset, hypunet fully automatically configures an entire segmentation pipeline that matches its properties.
+hypunet covers the entire pipeline, from preprocessing to model configuration, model training, postprocessing
+all the way to ensembling. After running hypunet, the trained model(s) can be applied to the test cases for inference.
 
 ### Dataset conversion
-nnU-Net expects datasets in a structured format. This format closely (but not entirely) follows the data structure of
+hypunet expects datasets in a structured format. This format closely (but not entirely) follows the data structure of
 the [Medical Segmentation Decthlon](http://medicaldecathlon.com/). Please read
-[this](documentation/dataset_conversion.md) for information on how to convert datasets to be compatible with nnU-Net.
+[this](documentation/dataset_conversion.md) for information on how to convert datasets to be compatible with hypunet.
 
 ### Experiment planning and preprocessing
-As a first step, nnU-Net extracts a dataset fingerprint (a set of dataset-specific properties such as
+As a first step, hypunet extracts a dataset fingerprint (a set of dataset-specific properties such as
 image sizes, voxel spacings, intensity information etc). This information is used to create three U-Net configurations:
 a 2D U-Net, a 3D U-Net that operated on full resolution images as well as a 3D U-Net cascade where the first U-Net
 creates a coarse segmentation map in downsampled images which is then refined by the second U-Net.
@@ -173,7 +173,7 @@ The test images are not preprocessed (they are not looked at at all!). Their pre
 inference.
 
 `--verify_dataset_integrity` should be run at least for the first time the command is run on a given dataset. This will execute some
-checks on the dataset to ensure that it is compatible with nnU-Net. If this check has passed once, it can be
+checks on the dataset to ensure that it is compatible with hypunet. If this check has passed once, it can be
 omitted in future runs. If you adhere to the dataset conversion guide (see above) then this should pass without issues :-)
 
 Note that `hypunet_plan_and_preprocess` accepts several additional input arguments. Running `-h` will list all of them
@@ -189,7 +189,7 @@ of seconds). Preprocessing depends on image size and how powerful the CPU is. It
 tens of minutes.
 
 ### Model training
-nnU-Net trains all U-Net configurations in a 5-fold cross-validation. This enables nnU-Net to determine the
+hypunet trains all U-Net configurations in a 5-fold cross-validation. This enables hypunet to determine the
 postprocessing and ensembling (see next step) on the training dataset. Per default, all U-Net configurations need to
 be run on a given dataset. There are, however situations in which only some configurations (and maybe even without
 running the cross-validation) are desired. See [FAQ](documentation/common_questions.md) for more information.
@@ -203,16 +203,16 @@ hypunet_train CONFIGURATION TRAINER_CLASS_NAME TASK_NAME_OR_ID FOLD  --npz (addi
 ```
 
 CONFIGURATION is a string that identifies the requested U-Net configuration. TRAINER_CLASS_NAME is the name of the
-model trainer. If you implement custom trainers (nnU-Net as a framework) you can specify your custom trainer here.
+model trainer. If you implement custom trainers (hypunet as a framework) you can specify your custom trainer here.
 TASK_NAME_OR_ID specifies what dataset should be trained on and FOLD specifies which fold of the 5-fold-cross-validaton
 is trained.
 
-nnU-Net stores a checkpoint every 50 epochs. If you need to continue a previous training, just add a `-c` to the
+hypunet stores a checkpoint every 50 epochs. If you need to continue a previous training, just add a `-c` to the
 training command.
 
 IMPORTANT: `--npz` makes the models save the softmax outputs during the final validation. It should only be used for trainings
 where you plan to run `hypunet_find_best_configuration` afterwards
-(this is nnU-Nets automated selection of the best performing (ensemble of) configuration(s), see below). If you are developing new
+(this is hypunets automated selection of the best performing (ensemble of) configuration(s), see below). If you are developing new
 trainer classes you may not need the softmax predictions and should therefore omit the `--npz` flag. Exported softmax
 predictions are very large and therefore can take up a lot of disk space.
 If you ran initially without the `--npz` flag but now require the softmax predictions, simply run
@@ -327,7 +327,7 @@ this GPU (and pytorch compiled with cuDNN 8.0.2), all network trainings take les
 
 **Multi GPU training is experimental and NOT RECOMMENDED!**
 
-nnU-Net supports two different multi-GPU implementation: DataParallel (DP) and Distributed Data Parallel (DDP)
+hypunet supports two different multi-GPU implementation: DataParallel (DP) and Distributed Data Parallel (DDP)
 (but currently only on one host!). DDP is faster than DP and should be preferred if possible. However, if you did not
 install hypunet as a framework (meaning you used the `pip install hypunet` variant), DDP is not available. It requires a
 different way of calling the correct python script (see below) which we cannot support from our terminal commands.
@@ -351,7 +351,7 @@ CUDA_VISIBLE_DEVICES envorinment variable to specify the GPU ids (specify as man
 , each GPU will run with a batch size of 1. If you omit --dbs, each GPU will run with the full batch size (2 for each GPU
 in this example for a total of batch size 4).
 
-To run the DDP training you must have nnU-Net installed as a framework. Your current working directory must be the
+To run the DDP training you must have hypunet installed as a framework. Your current working directory must be the
 hypunet folder (the one that has the dataset_conversion, evaluation, experiment_planning, ... subfolders!). You can then run
 the DDP training with the following command:
 
@@ -412,16 +412,16 @@ generated by `hypunet_predict`. For ensembling you can also specify a file that 
 These files are created when running `hypunet_find_best_configuration` and are located in the respective trained model
 directory (RESULTS_FOLDER/hypunet/CONFIGURATION/TaskXXX_MYTASK/TRAINER_CLASS_NAME__PLANS_FILE_IDENTIFIER/postprocessing.json or
 RESULTS_FOLDER/hypunet/ensembles/TaskXXX_MYTASK/ensemble_X__Y__Z--X__Y__Z/postprocessing.json). You can also choose to
-not provide a file (simply omit -pp) and nnU-Net will not run postprocessing.
+not provide a file (simply omit -pp) and hypunet will not run postprocessing.
 
 Note that per default, inference will be done with all available folds. We very strongly recommend you use all 5 folds.
-Thus, all 5 folds must have been trained prior to running inference. The list of available folds nnU-Net found will be
+Thus, all 5 folds must have been trained prior to running inference. The list of available folds hypunet found will be
 printed at the start of the inference.
 
 ## How to run inference with pretrained models
 
 Trained models for all challenges we participated in are publicly available. They can be downloaded and installed
-directly with nnU-Net. Note that downloading a pretrained model will overwrite other models that were trained with
+directly with hypunet. Note that downloading a pretrained model will overwrite other models that were trained with
 exactly the same configuration (2d, 3d_fullres, ...), trainer (hypunetTrainerV2) and plans.
 
 To obtain a list of available models, as well as a short description, run
@@ -447,11 +447,11 @@ When using the pretrained models you must adhere to the license of the dataset t
 
 To get you started we compiled two simple to follow examples:
 - run a training with the 3d full resolution U-Net on the Hippocampus dataset. See [here](documentation/training_example_Hippocampus.md).
-- run inference with nnU-Net's pretrained models on the Prostate dataset. See [here](documentation/inference_example_Prostate.md).
+- run inference with hypunet's pretrained models on the Prostate dataset. See [here](documentation/inference_example_Prostate.md).
 
 Usability not good enough? Let us know!
 
-# Extending or Changing nnU-Net
+# Extending or Changing hypunet
 Please refer to [this](documentation/extending_hypunet.md) guide.
 
 # Information on run time and potential performance bottlenecks.
@@ -469,14 +469,14 @@ We have collected solutions to common [questions](documentation/common_questions
 
 # Useful Resources
 
-* The [nnU-Net Workshop](https://github.com/IML-DKFZ/hypunet-workshop) is a step-by-step introduction to nnU-Net and visualizing
-results using MITK. Regarding nnU-Net, it includes training and inference examples and an example to train on a new dataset.
+* The [hypunet Workshop](https://github.com/IML-DKFZ/hypunet-workshop) is a step-by-step introduction to hypunet and visualizing
+results using MITK. Regarding hypunet, it includes training and inference examples and an example to train on a new dataset.
 The workshop itself is a jupyter notebook, which can be executed in GoogleColab.
 
-* This RSNA 2021 Deep Learning Lab [notebook](https://github.com/RSNA/AI-Deep-Learning-Lab-2021/blob/main/sessions/tcia-idc/RSNA_2021_IDC_and_TCIA.ipynb) demonstrates how nnU-Net can be used to analyze public DICOM datasets available in US National Cancer Institute [Imaging Data Commons (IDC)](https://imaging.datacommons.cancer.gov). This notebook demonstrates how datasets suitable for the analysis with nnU-Net can be identified within IDC, how they can be preprocessed from the DICOM format to be usable with nnU-Net, and how the results of the analysis can be visualized in the notebook without having to download anything. NCI Imaging Data Commons is a cloud-based repository of publicly available cancer imaging data co-located with the analysis and exploration tools and resources. IDC is a node within the broader NCI [Cancer Research Data Commons (CRDC)](https://datacommons.cancer.gov/) infrastructure that provides secure access to a large, comprehensive, and expanding collection of cancer research data.
+* This RSNA 2021 Deep Learning Lab [notebook](https://github.com/RSNA/AI-Deep-Learning-Lab-2021/blob/main/sessions/tcia-idc/RSNA_2021_IDC_and_TCIA.ipynb) demonstrates how hypunet can be used to analyze public DICOM datasets available in US National Cancer Institute [Imaging Data Commons (IDC)](https://imaging.datacommons.cancer.gov). This notebook demonstrates how datasets suitable for the analysis with hypunet can be identified within IDC, how they can be preprocessed from the DICOM format to be usable with hypunet, and how the results of the analysis can be visualized in the notebook without having to download anything. NCI Imaging Data Commons is a cloud-based repository of publicly available cancer imaging data co-located with the analysis and exploration tools and resources. IDC is a node within the broader NCI [Cancer Research Data Commons (CRDC)](https://datacommons.cancer.gov/) infrastructure that provides secure access to a large, comprehensive, and expanding collection of cancer research data.
 
 # Acknowledgements
 
 <img src="HI_Logo.png" width="512px" />
 
-nnU-Net is developed and maintained by the Applied Computer Vision Lab (ACVL) of [Helmholtz Imaging](http://helmholtz-imaging.de).
+hypunet is developed and maintained by the Applied Computer Vision Lab (ACVL) of [Helmholtz Imaging](http://helmholtz-imaging.de).

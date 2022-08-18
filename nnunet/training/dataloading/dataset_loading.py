@@ -308,7 +308,7 @@ class DataLoader3D(SlimDataLoaderBase):
             else:
                 # these values should have been precomputed
                 if 'class_locations' not in properties.keys():
-                    raise RuntimeError("Please rerun the preprocessing with the newest version of nnU-Net!")
+                    raise RuntimeError("Please rerun the preprocessing with the newest version of hypunet!")
 
                 # this saves us a np.unique. Preprocessing already did that for all cases. Neat.
                 foreground_classes = np.array(
@@ -495,7 +495,7 @@ class DataLoader2D(SlimDataLoaderBase):
             else:
                 # these values should have been precomputed
                 if 'class_locations' not in properties.keys():
-                    raise RuntimeError("Please rerun the preprocessing with the newest version of nnU-Net!")
+                    raise RuntimeError("Please rerun the preprocessing with the newest version of hypunet!")
 
                 foreground_classes = np.array(
                     [i for i in properties['class_locations'].keys() if len(properties['class_locations'][i]) != 0])

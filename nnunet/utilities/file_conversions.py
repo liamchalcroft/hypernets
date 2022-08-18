@@ -15,7 +15,7 @@ def convert_2d_image_to_nifti(input_filename: str, output_filename_truncated: st
     !!!2D images are often natural images which do not have a voxel spacing that could be used for resampling. These images
     must be resampled by you prior to converting them to nifti!!!
 
-    Datasets converted with this utility can only be used with the 2d U-Net configuration of nnU-Net
+    Datasets converted with this utility can only be used with the 2d U-Net configuration of hypunet
 
     If Transform is not None it will be applied to the image after loading.
 

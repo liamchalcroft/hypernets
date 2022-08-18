@@ -3,10 +3,10 @@ from setuptools import setup, find_namespace_packages
 setup(name='hypunet',
       packages=find_namespace_packages(include=["hypunet", "hypunet.*"]),
       version='1.7.0',
-      description='nnU-Net. Framework for out-of-the box biomedical image segmentation.',
-      url='https://github.com/liamchalcroft/hypernetsMIC-DKFZ/hypunet',
-      author='Division of Medical Image Computing, German Cancer Research Center',
-      author_email='f.isensee@dkfz-heidelberg.de',
+      description='hypunet. Hypernetwork adaptation of hypunet.',
+      url='https://github.com/liamchalcroft/hypernets',
+      author='',
+      author_email='',
       license='Apache License Version 2.0, January 2004',
       install_requires=[
             "torch>1.10.0",
@@ -50,5 +50,5 @@ setup(name='hypunet',
           ],
       },
       keywords=['deep learning', 'image segmentation', 'medical image analysis',
-                'medical image segmentation', 'nnU-Net', 'hypunet']
+                'medical image segmentation', 'hypunet', 'hypunet']
       )

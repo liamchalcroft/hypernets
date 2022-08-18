@@ -371,7 +371,7 @@ class hypunetHyperTrainer(HyperNetworkTrainer):
         self.min_size_per_class = None  # DONT USE THIS. plans['min_size_per_class']
 
         if plans.get('transpose_forward') is None or plans.get('transpose_backward') is None:
-            print("WARNING! You seem to have data that was preprocessed with a previous version of nnU-Net. "
+            print("WARNING! You seem to have data that was preprocessed with a previous version of hypunet. "
                   "You should rerun preprocessing. We will proceed and assume that both transpose_foward "
                   "and transpose_backward are [0, 1, 2]. If that is not correct then weird things will happen!")
             plans['transpose_forward'] = [0, 1, 2]

@@ -75,13 +75,13 @@ def main():
     parser.add_argument("--val_folder", required=False, default="validation_raw",
                         help="name of the validation folder. No need to use this for most people")
     parser.add_argument("--disable_saving", required=False, action='store_true',
-                        help="If set nnU-Net will not save any parameter files (except a temporary checkpoint that "
+                        help="If set hypunet will not save any parameter files (except a temporary checkpoint that "
                              "will be removed at the end of the training). Useful for development when you are "
                              "only interested in the results and want to save some disk space")
     parser.add_argument("--disable_postprocessing_on_folds", required=False, action='store_true',
-                        help="Running postprocessing on each fold only makes sense when developing with nnU-Net and "
+                        help="Running postprocessing on each fold only makes sense when developing with hypunet and "
                              "closely observing the model performance on specific configurations. You do not need it "
-                             "when applying nnU-Net because the postprocessing for this will be determined only once "
+                             "when applying hypunet because the postprocessing for this will be determined only once "
                              "all five folds have been trained and hypunet_find_best_configuration is called. Usually "
                              "running postprocessing on each fold is computationally cheap, but some users have "
                              "reported issues with very large images. If your images are large (>600x600x600 voxels) "
@@ -98,7 +98,7 @@ def main():
     parser.add_argument('--disable_next_stage_pred', action='store_true', default=False,
                         help='do not predict next stage')
     parser.add_argument('-pretrained_weights', type=str, required=False, default=None,
-                        help='path to nnU-Net checkpoint file to be used as pretrained model (use .model '
+                        help='path to hypunet checkpoint file to be used as pretrained model (use .model '
                              'file, for example model_final_checkpoint.model). Will only be used when actually training. '
                              'Optional. Beta. Use with caution.')
     parser.add_argument('-k', '--kwargs', nargs='*', action=ParseKwargs,

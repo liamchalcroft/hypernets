@@ -53,7 +53,7 @@ def main():
                         help="set this flag to check the dataset integrity. This is useful and should be done once for "
                              "each dataset!")
     parser.add_argument("-overwrite_plans", type=str, default=None, required=False,
-                        help="Use this to specify a plans file that should be used instead of whatever nnU-Net would "
+                        help="Use this to specify a plans file that should be used instead of whatever hypunet would "
                              "configure automatically. This will overwrite everything: intensity normalization, "
                              "network architecture, target spacing etc. Using this is useful for using pretrained "
                              "model weights as this will guarantee that the network architecture on the target "

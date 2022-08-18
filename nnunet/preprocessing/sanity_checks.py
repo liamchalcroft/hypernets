@@ -149,7 +149,7 @@ def verify_dataset_integrity(folder):
             if not same_geometry:
                 geometries_OK = False
                 print("The geometry of the image %s does not match the geometry of the label file. The pixel arrays "
-                      "will not be aligned and nnU-Net cannot use this data. Please make sure your image modalities "
+                      "will not be aligned and hypunet cannot use this data. Please make sure your image modalities "
                       "are coregistered and have the same geometry as the label" % expected_image_files[0][:-12])
             if nans_in_image:
                 print("There are NAN values in image %s" % expected_image_files[i])
