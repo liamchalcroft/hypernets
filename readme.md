@@ -96,7 +96,7 @@ Python 2 is deprecated and not supported. Please make sure you are using Python 
 1) Install [PyTorch](https://pytorch.org/get-started/locally/) as described on their website (conda/pip). Please 
 install the latest version and (IMPORTANT!) choose 
 the highest CUDA version compatible with your drivers for maximum performance. 
-**DO NOT JUST `PIP INSTALL NNUNET` WITHOUT PROPERLY INSTALLING PYTORCH FIRST**
+**DO NOT JUST `PIP INSTALL hypunet` WITHOUT PROPERLY INSTALLING PYTORCH FIRST**
 2) Verify that a recent version of pytorch was installed by running
     ```bash
     python -c 'import torch;print(torch.backends.cudnn.version())'
@@ -106,12 +106,12 @@ the highest CUDA version compatible with your drivers for maximum performance.
 3) Install nnU-Net depending on your use case:
     1) For use as **standardized baseline**, **out-of-the-box segmentation algorithm** or for running **inference with pretrained models**:
 
-       ```pip install nnunet```
+       ```pip install hypunet```
 
     2) For use as integrative **framework** (this will create a copy of the nnU-Net code on your computer so that you can modify it as needed):
           ```bash
-          git clone https://github.com/MIC-DKFZ/nnUNet.git
-          cd nnUNet
+          git clone https://github.com/MIC-DKFZ/hypunet.git
+          cd hypunet
           pip install -e .
           ```
 4) nnU-Net needs to know where you intend to save raw data, preprocessed data and trained models. For this you need to
@@ -124,7 +124,7 @@ the highest CUDA version compatible with your drivers for maximum performance.
     ```
 
 Installing nnU-Net will add several new commands to your terminal. These commands are used to run the entire nnU-Net
-pipeline. You can execute them from any location on your system. All nnU-Net commands have the prefix `nnUNet_` for
+pipeline. You can execute them from any location on your system. All nnU-Net commands have the prefix `hypunet_` for
 easy identification.
 
 Note that these commands simply execute python scripts. If you installed nnU-Net in a virtual environment, this
@@ -155,20 +155,20 @@ image sizes, voxel spacings, intensity information etc). This information is use
 a 2D U-Net, a 3D U-Net that operated on full resolution images as well as a 3D U-Net cascade where the first U-Net
 creates a coarse segmentation map in downsampled images which is then refined by the second U-Net.
 
-Provided that the requested raw dataset is located in the correct folder (`nnUNet_raw_data_base/nnUNet_raw_data/TaskXXX_MYTASK`,
+Provided that the requested raw dataset is located in the correct folder (`hypunet_raw_data_base/hypunet_raw_data/TaskXXX_MYTASK`,
 also see [here](documentation/dataset_conversion.md)), you can run this step with the following command:
 
 ```bash
-nnUNet_plan_and_preprocess -t XXX --verify_dataset_integrity
+hypunet_plan_and_preprocess -t XXX --verify_dataset_integrity
 ```
 
 `XXX` is the integer identifier associated with your Task name `TaskXXX_MYTASK`. You can pass several task IDs at once.
 
-Running `nnUNet_plan_and_preprocess` will populate your folder with preprocessed data. You will find the output in
-nnUNet_preprocessed/TaskXXX_MYTASK. `nnUNet_plan_and_preprocess` creates subfolders with preprocessed data for the 2D
+Running `hypunet_plan_and_preprocess` will populate your folder with preprocessed data. You will find the output in
+hypunet_preprocessed/TaskXXX_MYTASK. `hypunet_plan_and_preprocess` creates subfolders with preprocessed data for the 2D
 U-Net as well as all applicable 3D U-Nets. It will also create 'plans' files (with the ending.pkl) for the 2D and
 3D configurations. These files contain the generated segmentation pipeline configuration and will be read by the
-nnUNetTrainer (see below). Note that the preprocessed data folder only contains the training cases.
+hypunetTrainer (see below). Note that the preprocessed data folder only contains the training cases.
 The test images are not preprocessed (they are not looked at at all!). Their preprocessing happens on the fly during
 inference.
 
@@ -176,12 +176,12 @@ inference.
 checks on the dataset to ensure that it is compatible with nnU-Net. If this check has passed once, it can be
 omitted in future runs. If you adhere to the dataset conversion guide (see above) then this should pass without issues :-)
 
-Note that `nnUNet_plan_and_preprocess` accepts several additional input arguments. Running `-h` will list all of them
+Note that `hypunet_plan_and_preprocess` accepts several additional input arguments. Running `-h` will list all of them
 along with a description. If you run out of RAM during preprocessing, you may want to adapt the number of processes
 used with the `-tl` and `-tf` options.
 
-After `nnUNet_plan_and_preprocess` is completed, the U-Net configurations have been created and a preprocessed copy
-of the data will be located at nnUNet_preprocessed/TaskXXX_MYTASK.
+After `hypunet_plan_and_preprocess` is completed, the U-Net configurations have been created and a preprocessed copy
+of the data will be located at hypunet_preprocessed/TaskXXX_MYTASK.
 
 Extraction of the dataset fingerprint can take from a couple of seconds to several minutes depending on the properties
 of the segmentation task. Pipeline configuration given the extracted finger print is nearly instantaneous (couple
@@ -197,9 +197,9 @@ running the cross-validation) are desired. See [FAQ](documentation/common_questi
 Note that not all U-Net configurations are created for all datasets. In datasets with small image sizes, the U-Net
 cascade is omitted because the patch size of the full resolution U-Net already covers a large part of the input images.
 
-Training models is done with the `nnUNet_train` command. The general structure of the command is:
+Training models is done with the `hypunet_train` command. The general structure of the command is:
 ```bash
-nnUNet_train CONFIGURATION TRAINER_CLASS_NAME TASK_NAME_OR_ID FOLD  --npz (additional options)
+hypunet_train CONFIGURATION TRAINER_CLASS_NAME TASK_NAME_OR_ID FOLD  --npz (additional options)
 ```
 
 CONFIGURATION is a string that identifies the requested U-Net configuration. TRAINER_CLASS_NAME is the name of the
@@ -211,57 +211,57 @@ nnU-Net stores a checkpoint every 50 epochs. If you need to continue a previous 
 training command.
 
 IMPORTANT: `--npz` makes the models save the softmax outputs during the final validation. It should only be used for trainings
-where you plan to run `nnUNet_find_best_configuration` afterwards
+where you plan to run `hypunet_find_best_configuration` afterwards
 (this is nnU-Nets automated selection of the best performing (ensemble of) configuration(s), see below). If you are developing new
 trainer classes you may not need the softmax predictions and should therefore omit the `--npz` flag. Exported softmax
 predictions are very large and therefore can take up a lot of disk space.
 If you ran initially without the `--npz` flag but now require the softmax predictions, simply run
 ```bash
-nnUNet_train CONFIGURATION TRAINER_CLASS_NAME TASK_NAME_OR_ID FOLD -val --npz
+hypunet_train CONFIGURATION TRAINER_CLASS_NAME TASK_NAME_OR_ID FOLD -val --npz
 ```
 to generate them. This will only rerun the validation, not the training.
 
-See `nnUNet_train -h` for additional options.
+See `hypunet_train -h` for additional options.
 
 #### 2D U-Net
 For FOLD in [0, 1, 2, 3, 4], run:
 ```bash
-nnUNet_train 2d nnUNetTrainerV2 TaskXXX_MYTASK FOLD --npz
+hypunet_train 2d hypunetTrainerV2 TaskXXX_MYTASK FOLD --npz
 ```
 
 #### 3D full resolution U-Net
 For FOLD in [0, 1, 2, 3, 4], run:
 ```bash
-nnUNet_train 3d_fullres nnUNetTrainerV2 TaskXXX_MYTASK FOLD --npz
+hypunet_train 3d_fullres hypunetTrainerV2 TaskXXX_MYTASK FOLD --npz
 ```
 
 #### 3D U-Net cascade
 ##### 3D low resolution U-Net
 For FOLD in [0, 1, 2, 3, 4], run:
 ```bash
-nnUNet_train 3d_lowres nnUNetTrainerV2 TaskXXX_MYTASK FOLD --npz
+hypunet_train 3d_lowres hypunetTrainerV2 TaskXXX_MYTASK FOLD --npz
 ```
 
 ##### 3D full resolution U-Net
 For FOLD in [0, 1, 2, 3, 4], run:
 ```bash
-nnUNet_train 3d_cascade_fullres nnUNetTrainerV2CascadeFullRes TaskXXX_MYTASK FOLD --npz
+hypunet_train 3d_cascade_fullres hypunetTrainerV2CascadeFullRes TaskXXX_MYTASK FOLD --npz
 ```
 
 Note that the 3D full resolution U-Net of the cascade requires the five folds of the low resolution U-Net to be
 completed beforehand!
 
-The trained models will be written to the RESULTS_FOLDER/nnUNet folder. Each training obtains an automatically generated
+The trained models will be written to the RESULTS_FOLDER/hypunet folder. Each training obtains an automatically generated
 output folder name:
 
-nnUNet_preprocessed/CONFIGURATION/TaskXXX_MYTASKNAME/TRAINER_CLASS_NAME__PLANS_FILE_NAME/FOLD
+hypunet_preprocessed/CONFIGURATION/TaskXXX_MYTASKNAME/TRAINER_CLASS_NAME__PLANS_FILE_NAME/FOLD
 
 For Task002_Heart (from the MSD), for example, this looks like this:
 
-    RESULTS_FOLDER/nnUNet/
+    RESULTS_FOLDER/hypunet/
     ├── 2d
     │   └── Task02_Heart
-    │       └── nnUNetTrainerV2__nnUNetPlansv2.1
+    │       └── hypunetTrainerV2__hypunetPlansv2.1
     │           ├── fold_0
     │           ├── fold_1
     │           ├── fold_2
@@ -270,7 +270,7 @@ For Task002_Heart (from the MSD), for example, this looks like this:
     ├── 3d_cascade_fullres
     ├── 3d_fullres
     │   └── Task02_Heart
-    │       └── nnUNetTrainerV2__nnUNetPlansv2.1
+    │       └── hypunetTrainerV2__hypunetPlansv2.1
     │           ├── fold_0
     │           │   ├── debug.json
     │           │   ├── model_best.model
@@ -329,34 +329,34 @@ this GPU (and pytorch compiled with cuDNN 8.0.2), all network trainings take les
 
 nnU-Net supports two different multi-GPU implementation: DataParallel (DP) and Distributed Data Parallel (DDP)
 (but currently only on one host!). DDP is faster than DP and should be preferred if possible. However, if you did not
-install nnunet as a framework (meaning you used the `pip install nnunet` variant), DDP is not available. It requires a
+install hypunet as a framework (meaning you used the `pip install hypunet` variant), DDP is not available. It requires a
 different way of calling the correct python script (see below) which we cannot support from our terminal commands.
 
 Distributed training currently only works for the basic trainers (2D, 3D full resolution and 3D low resolution) and not
 for the second, high resolution U-Net of the cascade. The reason for this is that distributed training requires some
-changes to the network and loss function, requiring a new nnUNet trainer class. This is, as of now, simply not
+changes to the network and loss function, requiring a new hypunet trainer class. This is, as of now, simply not
 implemented for the cascade, but may be added in the future.
 
 To run distributed training (DP), use the following command:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0,1,2... nnUNet_train_DP CONFIGURATION nnUNetTrainerV2_DP TASK_NAME_OR_ID FOLD -gpus GPUS --dbs
+CUDA_VISIBLE_DEVICES=0,1,2... hypunet_train_DP CONFIGURATION hypunetTrainerV2_DP TASK_NAME_OR_ID FOLD -gpus GPUS --dbs
 ```
 
-Note that nnUNetTrainerV2 was replaced with nnUNetTrainerV2_DP. Just like before, CONFIGURATION can be 2d, 3d_lowres or
+Note that hypunetTrainerV2 was replaced with hypunetTrainerV2_DP. Just like before, CONFIGURATION can be 2d, 3d_lowres or
 3d_fullres. TASK_NAME_OR_ID refers to the task you would like to train and FOLD is the fold of the cross-validation.
 GPUS (integer value) specifies the number of GPUs you wish to train on. To specify which GPUs you want to use, please make use of the
 CUDA_VISIBLE_DEVICES envorinment variable to specify the GPU ids (specify as many as you configure with -gpus GPUS).
---dbs, if set, will distribute the batch size across GPUs. So if nnUNet configures a batch size of 2 and you run on 2 GPUs
+--dbs, if set, will distribute the batch size across GPUs. So if hypunet configures a batch size of 2 and you run on 2 GPUs
 , each GPU will run with a batch size of 1. If you omit --dbs, each GPU will run with the full batch size (2 for each GPU
 in this example for a total of batch size 4).
 
 To run the DDP training you must have nnU-Net installed as a framework. Your current working directory must be the
-nnunet folder (the one that has the dataset_conversion, evaluation, experiment_planning, ... subfolders!). You can then run
+hypunet folder (the one that has the dataset_conversion, evaluation, experiment_planning, ... subfolders!). You can then run
 the DDP training with the following command:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0,1,2... python -m torch.distributed.launch --master_port=XXXX --nproc_per_node=Y run/run_training_DDP.py CONFIGURATION nnUNetTrainerV2_DDP TASK_NAME_OR_ID FOLD --dbs
+CUDA_VISIBLE_DEVICES=0,1,2... python -m torch.distributed.launch --master_port=XXXX --nproc_per_node=Y run/run_training_DDP.py CONFIGURATION hypunetTrainerV2_DDP TASK_NAME_OR_ID FOLD --dbs
 ```
 
 XXXX must be an open port for process-process communication (something like 4321 will do on most systems). Y is the
@@ -367,15 +367,15 @@ you need to specify a different --master_port for each training!
 
 *IMPORTANT!*
 Multi-GPU training results in models that cannot be used for inference easily (as said above, all of this is experimental ;-) ).
-After finishing the training of all folds, run `nnUNet_change_trainer_class` on the folder where the trained model is
-(see `nnUNet_change_trainer_class -h` for instructions). After that you can run inference.
+After finishing the training of all folds, run `hypunet_change_trainer_class` on the folder where the trained model is
+(see `hypunet_change_trainer_class -h` for instructions). After that you can run inference.
 
 ### Identifying the best U-Net configuration
 Once all models are trained, use the following
 command to automatically determine what U-Net configuration(s) to use for test set prediction:
 
 ```bash
-nnUNet_find_best_configuration -m 2d 3d_fullres 3d_lowres 3d_cascade_fullres -t XXX
+hypunet_find_best_configuration -m 2d 3d_fullres 3d_lowres 3d_cascade_fullres -t XXX
 ```
 
 (all 5 folds need to be completed for all specified configurations!)
@@ -387,14 +387,14 @@ subset of the configurations, you can specify that with the `-m` command. Additi
 Remember that the data located in the input folder must adhere to the format specified
 [here](documentation/data_format_inference.md).
 
-`nnUNet_find_best_configuration` will print a string to the terminal with the inference commands you need to use.
+`hypunet_find_best_configuration` will print a string to the terminal with the inference commands you need to use.
 The easiest way to run inference is to simply use these commands.
 
 If you wish to manually specify the configuration(s) used for inference, use the following commands:
 
 For each of the desired configurations, run:
 ```
-nnUNet_predict -i INPUT_FOLDER -o OUTPUT_FOLDER -t TASK_NAME_OR_ID -m CONFIGURATION --save_npz
+hypunet_predict -i INPUT_FOLDER -o OUTPUT_FOLDER -t TASK_NAME_OR_ID -m CONFIGURATION --save_npz
 ```
 
 Only specify `--save_npz` if you intend to use ensembling. `--save_npz` will make the command save the softmax
@@ -404,14 +404,14 @@ Please select a separate `OUTPUT_FOLDER` for each configuration!
 
 If you wish to run ensembling, you can ensemble the predictions from several configurations with the following command:
 ```bash
-nnUNet_ensemble -f FOLDER1 FOLDER2 ... -o OUTPUT_FOLDER -pp POSTPROCESSING_FILE
+hypunet_ensemble -f FOLDER1 FOLDER2 ... -o OUTPUT_FOLDER -pp POSTPROCESSING_FILE
 ```
 
 You can specify an arbitrary number of folders, but remember that each folder needs to contain npz files that were
-generated by `nnUNet_predict`. For ensembling you can also specify a file that tells the command how to postprocess.
-These files are created when running `nnUNet_find_best_configuration` and are located in the respective trained model
-directory (RESULTS_FOLDER/nnUNet/CONFIGURATION/TaskXXX_MYTASK/TRAINER_CLASS_NAME__PLANS_FILE_IDENTIFIER/postprocessing.json or
-RESULTS_FOLDER/nnUNet/ensembles/TaskXXX_MYTASK/ensemble_X__Y__Z--X__Y__Z/postprocessing.json). You can also choose to
+generated by `hypunet_predict`. For ensembling you can also specify a file that tells the command how to postprocess.
+These files are created when running `hypunet_find_best_configuration` and are located in the respective trained model
+directory (RESULTS_FOLDER/hypunet/CONFIGURATION/TaskXXX_MYTASK/TRAINER_CLASS_NAME__PLANS_FILE_IDENTIFIER/postprocessing.json or
+RESULTS_FOLDER/hypunet/ensembles/TaskXXX_MYTASK/ensemble_X__Y__Z--X__Y__Z/postprocessing.json). You can also choose to
 not provide a file (simply omit -pp) and nnU-Net will not run postprocessing.
 
 Note that per default, inference will be done with all available folds. We very strongly recommend you use all 5 folds.
@@ -422,26 +422,26 @@ printed at the start of the inference.
 
 Trained models for all challenges we participated in are publicly available. They can be downloaded and installed
 directly with nnU-Net. Note that downloading a pretrained model will overwrite other models that were trained with
-exactly the same configuration (2d, 3d_fullres, ...), trainer (nnUNetTrainerV2) and plans.
+exactly the same configuration (2d, 3d_fullres, ...), trainer (hypunetTrainerV2) and plans.
 
 To obtain a list of available models, as well as a short description, run
 
 ```bash
-nnUNet_print_available_pretrained_models
+hypunet_print_available_pretrained_models
 ```
 
 You can then download models by specifying their task name. For the Liver and Liver Tumor Segmentation Challenge,
 for example, this would be:
 
 ```bash
-nnUNet_download_pretrained_model Task029_LiTS
+hypunet_download_pretrained_model Task029_LiTS
 ```
 After downloading is complete, you can use this model to run [inference](#run-inference). Keep in mind that each of
 these models has specific data requirements (Task029_LiTS runs on abdominal CT scans, others require several image
 modalities as input in a specific order).
 
 When using the pretrained models you must adhere to the license of the dataset they are trained on! If you run
-`nnUNet_download_pretrained_model` you will find a link where you can find the license for each dataset.
+`hypunet_download_pretrained_model` you will find a link where you can find the license for each dataset.
 
 ## Examples
 
@@ -452,7 +452,7 @@ To get you started we compiled two simple to follow examples:
 Usability not good enough? Let us know!
 
 # Extending or Changing nnU-Net
-Please refer to [this](documentation/extending_nnunet.md) guide.
+Please refer to [this](documentation/extending_hypunet.md) guide.
 
 # Information on run time and potential performance bottlenecks.
 
@@ -469,7 +469,7 @@ We have collected solutions to common [questions](documentation/common_questions
 
 # Useful Resources
 
-* The [nnU-Net Workshop](https://github.com/IML-DKFZ/nnunet-workshop) is a step-by-step introduction to nnU-Net and visualizing
+* The [nnU-Net Workshop](https://github.com/IML-DKFZ/hypunet-workshop) is a step-by-step introduction to nnU-Net and visualizing
 results using MITK. Regarding nnU-Net, it includes training and inference examples and an example to train on a new dataset.
 The workshop itself is a jupyter notebook, which can be executed in GoogleColab.
 

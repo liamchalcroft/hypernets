@@ -13,11 +13,11 @@
 #    limitations under the License.
 
 
-import nnunet
-from nnunet.paths import network_training_output_dir, preprocessing_output_dir, default_plans_identifier
+import hypunet
+from hypunet.paths import network_training_output_dir, preprocessing_output_dir, default_plans_identifier
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.experiment_planning.summarize_plans import summarize_plans
-from nnunet.training.model_restore import recursive_find_python_class
+from hypunet.experiment_planning.summarize_plans import summarize_plans
+from hypunet.training.model_restore import recursive_find_python_class
 
 
 def get_configuration_from_output_folder(folder):
@@ -32,8 +32,8 @@ def get_configuration_from_output_folder(folder):
 
 
 def get_default_configuration(network, task, network_trainer, plans_identifier=default_plans_identifier,
-                              search_in=(nnunet.__path__[0], "training", "network_training"),
-                              base_module='nnunet.training.network_training'):
+                              search_in=(hypunet.__path__[0], "training", "network_training"),
+                              base_module='hypunet.training.network_training'):
     assert network in ['2d', '3d_lowres', '3d_fullres', '3d_cascade_fullres'], \
         "network can only be one of the following: \'2d\', \'3d_lowres\', \'3d_fullres\', \'3d_cascade_fullres\'"
 
@@ -62,7 +62,7 @@ def get_default_configuration(network, task, network_trainer, plans_identifier=d
     output_folder_name = join(network_training_output_dir, network, task, network_trainer + "__" + plans_identifier)
 
     print("###############################################")
-    print("I am running the following nnUNet: %s" % network)
+    print("I am running the following hypunet: %s" % network)
     print("My trainer class is: ", trainer_class)
     print("For that I will be using the following configuration:")
     summarize_plans(plans_file)

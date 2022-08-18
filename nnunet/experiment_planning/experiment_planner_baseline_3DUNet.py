@@ -16,17 +16,17 @@ import shutil
 from collections import OrderedDict
 from copy import deepcopy
 
-import nnunet
+import hypunet
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.configuration import default_num_threads
-from nnunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
-from nnunet.experiment_planning.common_utils import get_pool_and_conv_props_poolLateV2
-from nnunet.experiment_planning.utils import create_lists_from_splitted_dataset
-from nnunet.network_architecture.generic_UNet import Generic_UNet
-from nnunet.paths import *
-from nnunet.preprocessing.cropping import get_case_identifier_from_npz
-from nnunet.training.model_restore import recursive_find_python_class
+from hypunet.configuration import default_num_threads
+from hypunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
+from hypunet.experiment_planning.common_utils import get_pool_and_conv_props_poolLateV2
+from hypunet.experiment_planning.utils import create_lists_from_splitted_dataset
+from hypunet.network_architecture.generic_UNet import Generic_UNet
+from hypunet.paths import *
+from hypunet.preprocessing.cropping import get_case_identifier_from_npz
+from hypunet.training.model_restore import recursive_find_python_class
 
 
 class ExperimentPlanner(object):
@@ -43,7 +43,7 @@ class ExperimentPlanner(object):
 
         self.plans_per_stage = OrderedDict()
         self.plans = OrderedDict()
-        self.plans_fname = join(self.preprocessed_output_folder, "nnUNetPlans" + "fixed_plans_3D.pkl")
+        self.plans_fname = join(self.preprocessed_output_folder, "hypunetPlans" + "fixed_plans_3D.pkl")
         self.data_identifier = default_data_identifier
 
         self.transpose_forward = [0, 1, 2]
@@ -286,7 +286,7 @@ class ExperimentPlanner(object):
                                                                   len(self.list_of_cropped_npz_files),
                                                                   num_modalities, len(all_classes) + 1))
 
-        # thanks Zakiyi (https://github.com/MIC-DKFZ/nnUNet/issues/61) for spotting this bug :-)
+        # thanks Zakiyi (https://github.com/MIC-DKFZ/hypunet/issues/61) for spotting this bug :-)
         # if np.prod(self.plans_per_stage[-1]['median_patient_size_in_voxels'], dtype=np.int64) / \
         #        architecture_input_voxels < HOW_MUCH_OF_A_PATIENT_MUST_THE_NETWORK_SEE_AT_STAGE0:
         architecture_input_voxels_here = np.prod(self.plans_per_stage[-1]['patch_size'], dtype=np.int64)
@@ -429,8 +429,8 @@ class ExperimentPlanner(object):
         normalization_schemes = self.plans['normalization_schemes']
         use_nonzero_mask_for_normalization = self.plans['use_mask_for_norm']
         intensityproperties = self.plans['dataset_properties']['intensityproperties']
-        preprocessor_class = recursive_find_python_class([join(nnunet.__path__[0], "preprocessing")],
-                                                         self.preprocessor_name, current_module="nnunet.preprocessing")
+        preprocessor_class = recursive_find_python_class([join(hypunet.__path__[0], "preprocessing")],
+                                                         self.preprocessor_name, current_module="hypunet.preprocessing")
         assert preprocessor_class is not None
         preprocessor = preprocessor_class(normalization_schemes, use_nonzero_mask_for_normalization,
                                          self.transpose_forward,
@@ -463,16 +463,16 @@ if __name__ == "__main__":
     tasks = []
     for i in task_ids:
         i = int(i)
-        candidates = subdirs(nnUNet_cropped_data, prefix="Task%03.0d" % i, join=False)
+        candidates = subdirs(hypunet_cropped_data, prefix="Task%03.0d" % i, join=False)
         assert len(candidates) == 1
         tasks.append(candidates[0])
 
     for t in tasks:
         try:
             print("\n\n\n", t)
-            cropped_out_dir = os.path.join(nnUNet_cropped_data, t)
+            cropped_out_dir = os.path.join(hypunet_cropped_data, t)
             preprocessing_output_dir_this_task = os.path.join(preprocessing_output_dir, t)
-            splitted_4d_output_dir_task = os.path.join(nnUNet_raw_data, t)
+            splitted_4d_output_dir_task = os.path.join(hypunet_raw_data, t)
             lists, modalities = create_lists_from_splitted_dataset(splitted_4d_output_dir_task)
 
             dataset_analyzer = DatasetAnalyzer(cropped_out_dir, overwrite=False)
@@ -480,7 +480,7 @@ if __name__ == "__main__":
 
             maybe_mkdir_p(preprocessing_output_dir_this_task)
             shutil.copy(join(cropped_out_dir, "dataset_properties.pkl"), preprocessing_output_dir_this_task)
-            shutil.copy(join(nnUNet_raw_data, t, "dataset.json"), preprocessing_output_dir_this_task)
+            shutil.copy(join(hypunet_raw_data, t, "dataset.json"), preprocessing_output_dir_this_task)
 
             threads = (tl, tf)
 

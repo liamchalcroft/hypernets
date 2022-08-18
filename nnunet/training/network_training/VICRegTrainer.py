@@ -16,8 +16,8 @@
 from itertools import chain
 
 import torch
-from nnunet.training.network_training.ContrastivePreTrainer import ContrastivePreTrainer, GC_ContrastivePreTrainer
-from nnunet.training.network_training.custom_layer import BatchNormDimSwap
+from hypunet.training.network_training.ContrastivePreTrainer import ContrastivePreTrainer, GC_ContrastivePreTrainer
+from hypunet.training.network_training.custom_layer import BatchNormDimSwap
 from batchgenerators.utilities.file_and_folder_operations import *
 
 from solo.losses.vicreg import vicreg_loss_func
@@ -26,7 +26,7 @@ from grad_cache.functional import cat_input_tensor
 
 class VICRegTrainer(ContrastivePreTrainer):
     """
-    Info for Fabian: same as internal nnUNetTrainerV2_2
+    Info for Fabian: same as internal hypunetTrainerV2_2
     """
 
     def __init__(self, plans_file, output_folder=None, dataset_directory=None,
@@ -41,6 +41,8 @@ class VICRegTrainer(ContrastivePreTrainer):
         self.load_plans_file()
         self.process_plans(self.plans)
         self.detcon = detcon
+
+        self.initial_lr = 1e-4
 
         self.projector = torch.nn.Sequential(
             torch.nn.Linear(320 if self.threeD else 480, proj_hidden_dim),
@@ -73,6 +75,10 @@ class VICRegTrainer(ContrastivePreTrainer):
             view1 = view1.view(view1.size(0), view1.size(1), -1).mean(dim=2)
             view2 = view2.view(view2.size(0), view2.size(1), -1).mean(dim=2)
 
+        # print('before proj')
+        # print('view1: ', view1.min(), view1.max(), view1.mean(), view1.std())
+        # print('view2: ', view2.min(), view2.max(), view2.mean(), view2.std())
+
         z1 = self.projector(view1)
         z2 = self.projector(view2)
 
@@ -83,6 +89,10 @@ class VICRegTrainer(ContrastivePreTrainer):
             z1 = z1.permute(1,0,2).reshape(z1.size(1), -1)
             z2 = z2.permute(1,0,2).reshape(z2.size(1), -1)
 
+        # print('after proj')
+        # print('z1: ', z1.min(), z1.max(), z1.mean(), z1.std())
+        # print('z2: ', z2.min(), z2.max(), z2.mean(), z2.std())
+
         vic_loss = vicreg_loss_func(z1,z2,self.sim_loss_weight,self.var_loss_weight,self.cov_loss_weight)
 
         del z1, z2, view1, view2
@@ -91,7 +101,7 @@ class VICRegTrainer(ContrastivePreTrainer):
 
 class GC_VICRegTrainer(GC_ContrastivePreTrainer):
     """
-    Info for Fabian: same as internal nnUNetTrainerV2_2
+    Info for Fabian: same as internal hypunetTrainerV2_2
     """
 
     def __init__(self, plans_file, output_folder=None, dataset_directory=None,

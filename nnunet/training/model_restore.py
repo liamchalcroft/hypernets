@@ -12,12 +12,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import nnunet
+import hypunet
 import torch
 from batchgenerators.utilities.file_and_folder_operations import *
 import importlib
 import pkgutil
-from nnunet.training.network_training.nnUNetHyperTrainer import nnUNetHyperTrainer
+from hypunet.training.network_training.hypunetHyperTrainer import hypunetHyperTrainer
 
 
 def recursive_find_python_class(folder, trainer_name, current_module):
@@ -43,10 +43,10 @@ def recursive_find_python_class(folder, trainer_name, current_module):
 
 def restore_model(pkl_file, checkpoint=None, train=False, fp16=None):
     """
-    This is a utility function to load any nnUNet trainer from a pkl. It will recursively search
-    nnunet.trainig.network_training for the file that contains the trainer and instantiate it with the arguments saved in the pkl file. If checkpoint
+    This is a utility function to load any hypunet trainer from a pkl. It will recursively search
+    hypunet.trainig.network_training for the file that contains the trainer and instantiate it with the arguments saved in the pkl file. If checkpoint
     is specified, it will furthermore load the checkpoint file in train/test mode (as specified by train).
-    The pkl file required here is the one that will be saved automatically when calling nnUNetTrainer.save_checkpoint.
+    The pkl file required here is the one that will be saved automatically when calling hypunetTrainer.save_checkpoint.
     :param pkl_file:
     :param checkpoint:
     :param train:
@@ -56,8 +56,8 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None):
     info = load_pickle(pkl_file)
     init = info['init']
     name = info['name']
-    search_in = join(nnunet.__path__[0], "training", "network_training")
-    tr = recursive_find_python_class([search_in], name, current_module="nnunet.training.network_training")
+    search_in = join(hypunet.__path__[0], "training", "network_training")
+    tr = recursive_find_python_class([search_in], name, current_module="hypunet.training.network_training")
 
     if tr is None:
         """
@@ -71,16 +71,16 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None):
             pass
 
     if tr is None:
-        raise RuntimeError("Could not find the model trainer specified in checkpoint in nnunet.trainig.network_training. If it "
+        raise RuntimeError("Could not find the model trainer specified in checkpoint in hypunet.trainig.network_training. If it "
                            "is not located there, please move it or change the code of restore_model. Your model "
-                           "trainer can be located in any directory within nnunet.trainig.network_training (search is recursive)."
+                           "trainer can be located in any directory within hypunet.trainig.network_training (search is recursive)."
                            "\nDebug info: \ncheckpoint file: %s\nName of trainer: %s " % (checkpoint, name))
-    assert issubclass(tr, nnUNetHyperTrainer), "The network trainer was found but is not a subclass of nnUNetTrainer. " \
+    assert issubclass(tr, hypunetHyperTrainer), "The network trainer was found but is not a subclass of hypunetTrainer. " \
                                           "Please make it so!"
 
     # this is now deprecated
     """if len(init) == 7:
-        print("warning: this model seems to have been saved with a previous version of nnUNet. Attempting to load it "
+        print("warning: this model seems to have been saved with a previous version of hypunet. Attempting to load it "
               "anyways. Expect the unexpected.")
         print("manually editing init args...")
         init = [init[i] for i in range(len(init)) if i != 2]"""
@@ -149,7 +149,7 @@ def load_model_and_checkpoint_files(folder, folds=None, mixed_precision=None, ch
 
 
 if __name__ == "__main__":
-    pkl = "/home/fabian/PhD/results/nnUNetV2/nnUNetV2_3D_fullres/Task004_Hippocampus/fold0/model_best.model.pkl"
+    pkl = "/home/fabian/PhD/results/hypunetV2/hypunetV2_3D_fullres/Task004_Hippocampus/fold0/model_best.model.pkl"
     checkpoint = pkl[:-4]
     train = False
     trainer = restore_model(pkl, checkpoint, train)

@@ -19,7 +19,7 @@ import SimpleITK as sitk
 import nibabel as nib
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.configuration import default_num_threads
+from hypunet.configuration import default_num_threads
 
 
 def verify_all_same_orientation(folder):

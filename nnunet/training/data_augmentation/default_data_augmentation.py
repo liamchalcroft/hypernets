@@ -24,9 +24,9 @@ from batchgenerators.transforms.color_transforms import GammaTransform
 from batchgenerators.transforms.spatial_transforms import SpatialTransform, MirrorTransform
 from batchgenerators.transforms.utility_transforms import RemoveLabelTransform, RenameTransform, NumpyToTensor
 
-from nnunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
+from hypunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
     MaskTransform, ConvertSegmentationToRegionsTransform
-from nnunet.training.data_augmentation.pyramid_augmentations import MoveSegAsOneHotToData, \
+from hypunet.training.data_augmentation.pyramid_augmentations import MoveSegAsOneHotToData, \
     ApplyRandomBinaryOperatorTransform, \
     RemoveRandomConnectedComponentFromOneHotEncodingTransform
 
@@ -89,7 +89,7 @@ default_3D_augmentation_params = {
     "additive_brightness_mu": 0.0,
     "additive_brightness_sigma": 0.1,
 
-    "num_threads": 12 if 'nnUNet_n_proc_DA' not in os.environ else int(os.environ['nnUNet_n_proc_DA']),
+    "num_threads": 12 if 'hypunet_n_proc_DA' not in os.environ else int(os.environ['hypunet_n_proc_DA']),
     "num_cached_per_thread": 1,
 }
 
@@ -236,8 +236,8 @@ def get_default_augmentation(dataloader_train, dataloader_val, patch_size, param
 
 
 if __name__ == "__main__":
-    from nnunet.training.dataloading.dataset_loading import DataLoader3D, load_dataset
-    from nnunet.paths import preprocessing_output_dir
+    from hypunet.training.dataloading.dataset_loading import DataLoader3D, load_dataset
+    from hypunet.paths import preprocessing_output_dir
     import os
     import pickle
 

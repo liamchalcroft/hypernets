@@ -15,11 +15,11 @@
 import numpy as np
 import torch
 from torch import nn
-from nnunet.utilities.nd_softmax import softmax_helper
-from nnunet.training.network_training.nnUNetHyperTrainerV2 import nnUNetHyperTrainerV2
+from hypunet.utilities.nd_softmax import softmax_helper
+from hypunet.training.network_training.hypunetHyperTrainerV2 import hypunetHyperTrainerV2
 
 
-# taken from https://github.com/JunMa11/SegLoss/blob/master/test/nnUNetV2/loss_functions/focal_loss.py
+# taken from https://github.com/JunMa11/SegLoss/blob/master/test/hypunetV2/loss_functions/focal_loss.py
 class FocalLoss(nn.Module):
     """
     copy from: https://github.com/Hsuxu/Loss_ToolBox-PyTorch/blob/master/FocalLoss/FocalLoss.py
@@ -107,7 +107,7 @@ class FocalLoss(nn.Module):
         return loss
 
 
-# taken from https://github.com/JunMa11/SegLoss/blob/master/test/nnUNetV2/loss_functions/focal_loss.py
+# taken from https://github.com/JunMa11/SegLoss/blob/master/test/hypunetV2/loss_functions/focal_loss.py
 class FocalLossV2(nn.Module):
     """
     copy from: https://github.com/Hsuxu/Loss_ToolBox-PyTorch/blob/master/FocalLoss/FocalLoss.py

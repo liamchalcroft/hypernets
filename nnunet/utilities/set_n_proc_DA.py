@@ -18,8 +18,8 @@ import os
 def get_allowed_n_proc_DA():
     hostname = subprocess.getoutput(['hostname'])
 
-    if 'nnUNet_n_proc_DA' in os.environ.keys():
-        return int(os.environ['nnUNet_n_proc_DA'])
+    if 'hypunet_n_proc_DA' in os.environ.keys():
+        return int(os.environ['hypunet_n_proc_DA'])
 
     if hostname in ['hdf19-gpu16', 'hdf19-gpu17', 'e230-AMDworkstation']:
         return 16

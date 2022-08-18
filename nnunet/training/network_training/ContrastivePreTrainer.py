@@ -18,19 +18,19 @@ from typing import Tuple, List
 
 import numpy as np
 import torch
-from nnunet.training.data_augmentation.data_augmentation_contrastive import get_contrastive_augmentation
-from nnunet.utilities.to_torch import maybe_to_torch, to_cuda
-from nnunet.network_architecture.generic_UNet import ConvDropoutNormNonlin, Generic_UNet
-from nnunet.network_architecture.initialization import InitWeights_He
-from nnunet.network_architecture.neural_network import SegmentationNetwork
-from nnunet.training.data_augmentation.default_data_augmentation import default_2D_augmentation_params, \
+from hypunet.training.data_augmentation.data_augmentation_contrastive import get_contrastive_augmentation
+from hypunet.utilities.to_torch import maybe_to_torch, to_cuda
+from hypunet.network_architecture.generic_UNet import ConvDropoutNormNonlin, Generic_UNet
+from hypunet.network_architecture.initialization import InitWeights_He
+from hypunet.network_architecture.neural_network import SegmentationNetwork
+from hypunet.training.data_augmentation.default_data_augmentation import default_2D_augmentation_params, \
     get_patch_size, default_3D_augmentation_params
-from nnunet.training.dataloading.dataset_loading import load_dataset, DataLoader3D, DataLoader2D, unpack_dataset
-from nnunet.training.network_training.network_pretrainer import NetworkPreTrainer
-from nnunet.training.network_training.gradcache_pretrainer import GradCachePreTrainer
-from nnunet.utilities.nd_softmax import softmax_helper
+from hypunet.training.dataloading.dataset_loading import load_dataset, DataLoader3D, DataLoader2D, unpack_dataset
+from hypunet.training.network_training.network_pretrainer import NetworkPreTrainer
+from hypunet.training.network_training.gradcache_pretrainer import GradCachePreTrainer
+from hypunet.utilities.nd_softmax import softmax_helper
 from torch import nn
-from nnunet.training.learning_rate.poly_lr import poly_lr
+from hypunet.training.learning_rate.poly_lr import poly_lr
 from batchgenerators.utilities.file_and_folder_operations import *
 
 import matplotlib
@@ -39,7 +39,7 @@ matplotlib.use("agg")
 
 class ContrastivePreTrainer(NetworkPreTrainer):
     """
-    Info for Fabian: same as internal nnUNetTrainerV2_2
+    Info for Fabian: same as internal hypunetTrainerV2_2
     """
 
     def __init__(self, plans_file, output_folder=None, dataset_directory=None,
@@ -49,7 +49,7 @@ class ContrastivePreTrainer(NetworkPreTrainer):
         super().__init__(deterministic, fp16, hyper_depth, meta_dim)
 
         self.max_num_epochs = 500
-        self.initial_lr = 1e-2
+        # self.initial_lr = 1e-2
 
         self.pin_memory = True
         self.unpack_data = unpack_data
@@ -464,7 +464,7 @@ class ContrastivePreTrainer(NetworkPreTrainer):
 
 class GC_ContrastivePreTrainer(GradCachePreTrainer):
     """
-    Info for Fabian: same as internal nnUNetTrainerV2_2
+    Info for Fabian: same as internal hypunetTrainerV2_2
     """
 
     def __init__(self, plans_file, output_folder=None, dataset_directory=None,
@@ -474,7 +474,7 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
         super().__init__(deterministic, fp16, hyper_depth, meta_dim)
 
         self.max_num_epochs = 500
-        self.initial_lr = 1e-2
+        # self.initial_lr = 1e-2
 
         self.pin_memory = True
         self.unpack_data = unpack_data

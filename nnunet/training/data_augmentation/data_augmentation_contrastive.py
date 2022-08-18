@@ -23,9 +23,9 @@ from batchgenerators.transforms.noise_transforms import GaussianNoiseTransform, 
 from batchgenerators.transforms.resample_transforms import SimulateLowResolutionTransform
 from batchgenerators.transforms.spatial_transforms import SpatialTransform, MirrorTransform
 from batchgenerators.transforms.utility_transforms import RenameTransform, NumpyToTensor, RemoveLabelTransform
-from nnunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
+from hypunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
     MaskTransform, MoveSegAsOneHotToData
-from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params
+from hypunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params
 
 
 def get_augs(tr_transforms=[], target_key='data', label_key=None,

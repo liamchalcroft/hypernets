@@ -13,7 +13,7 @@
 #    limitations under the License.
 
 
-from nnunet.utilities.tensor_utilities import mean_tensor
+from hypunet.utilities.tensor_utilities import mean_tensor
 from torch import nn
 import torch
 from torch.nn.parameter import Parameter

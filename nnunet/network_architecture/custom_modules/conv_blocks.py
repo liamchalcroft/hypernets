@@ -14,7 +14,7 @@
 
 
 from copy import deepcopy
-from nnunet.network_architecture.custom_modules.helperModules import Identity
+from hypunet.network_architecture.custom_modules.helperModules import Identity
 from torch import nn
 
 

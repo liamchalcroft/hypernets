@@ -13,15 +13,15 @@
 #    limitations under the License.
 
 
-import nnunet
+import hypunet
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
-from nnunet.experiment_planning.utils import crop
-from nnunet.paths import *
+from hypunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
+from hypunet.experiment_planning.utils import crop
+from hypunet.paths import *
 import shutil
-from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
-from nnunet.preprocessing.sanity_checks import verify_dataset_integrity
-from nnunet.training.model_restore import recursive_find_python_class
+from hypunet.utilities.task_name_id_conversion import convert_id_to_task_name
+from hypunet.preprocessing.sanity_checks import verify_dataset_integrity
+from hypunet.training.model_restore import recursive_find_python_class
 
 
 def main():
@@ -68,10 +68,10 @@ def main():
                              "Note that this will first print the old plans (which are going to be overwritten) and "
                              "then the new ones (provided that -no_pp was NOT set).")
     parser.add_argument("-overwrite_plans_identifier", type=str, default=None, required=False,
-                        help="If you set overwrite_plans you need to provide a unique identifier so that nnUNet knows "
+                        help="If you set overwrite_plans you need to provide a unique identifier so that hypunet knows "
                              "where to look for the correct plans and data. Assume your identifier is called "
                              "IDENTIFIER, the correct training command would be:\n"
-                             "'nnUNet_train CONFIG TRAINER TASKID FOLD -p nnUNetPlans_pretrained_IDENTIFIER "
+                             "'hypunet_train CONFIG TRAINER TASKID FOLD -p hypunetPlans_pretrained_IDENTIFIER "
                              "-pretrained_weights FILENAME'")
 
     args = parser.parse_args()
@@ -102,35 +102,35 @@ def main():
         task_name = convert_id_to_task_name(i)
 
         if args.verify_dataset_integrity:
-            verify_dataset_integrity(join(nnUNet_raw_data, task_name))
+            verify_dataset_integrity(join(hypunet_raw_data, task_name))
 
         crop(task_name, False, tf)
 
         tasks.append(task_name)
 
-    search_in = join(nnunet.__path__[0], "experiment_planning")
+    search_in = join(hypunet.__path__[0], "experiment_planning")
 
     if planner_name3d is not None:
-        planner_3d = recursive_find_python_class([search_in], planner_name3d, current_module="nnunet.experiment_planning")
+        planner_3d = recursive_find_python_class([search_in], planner_name3d, current_module="hypunet.experiment_planning")
         if planner_3d is None:
             raise RuntimeError("Could not find the Planner class %s. Make sure it is located somewhere in "
-                               "nnunet.experiment_planning" % planner_name3d)
+                               "hypunet.experiment_planning" % planner_name3d)
     else:
         planner_3d = None
 
     if planner_name2d is not None:
-        planner_2d = recursive_find_python_class([search_in], planner_name2d, current_module="nnunet.experiment_planning")
+        planner_2d = recursive_find_python_class([search_in], planner_name2d, current_module="hypunet.experiment_planning")
         if planner_2d is None:
             raise RuntimeError("Could not find the Planner class %s. Make sure it is located somewhere in "
-                               "nnunet.experiment_planning" % planner_name2d)
+                               "hypunet.experiment_planning" % planner_name2d)
     else:
         planner_2d = None
 
     for t in tasks:
         print("\n\n\n", t)
-        cropped_out_dir = os.path.join(nnUNet_cropped_data, t)
+        cropped_out_dir = os.path.join(hypunet_cropped_data, t)
         preprocessing_output_dir_this_task = os.path.join(preprocessing_output_dir, t)
-        #splitted_4d_output_dir_task = os.path.join(nnUNet_raw_data, t)
+        #splitted_4d_output_dir_task = os.path.join(hypunet_raw_data, t)
         #lists, modalities = create_lists_from_splitted_dataset(splitted_4d_output_dir_task)
 
         # we need to figure out if we need the intensity propoerties. We collect them only if one of the modalities is CT
@@ -143,7 +143,7 @@ def main():
 
         maybe_mkdir_p(preprocessing_output_dir_this_task)
         shutil.copy(join(cropped_out_dir, "dataset_properties.pkl"), preprocessing_output_dir_this_task)
-        shutil.copy(join(nnUNet_raw_data, t, "dataset.json"), preprocessing_output_dir_this_task)
+        shutil.copy(join(hypunet_raw_data, t, "dataset.json"), preprocessing_output_dir_this_task)
 
         threads = (tl, tf)
 

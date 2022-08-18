@@ -15,11 +15,11 @@
 
 import argparse
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.run.default_configuration import get_default_configuration
-from nnunet.paths import default_plans_identifier
-from nnunet.run.load_pretrained_weights import load_pretrained_weights
-from nnunet.training.network_training.nnUNetHyperTrainer import nnUNetHyperTrainer
-from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
+from hypunet.run.default_configuration import get_default_configuration
+from hypunet.paths import default_plans_identifier
+from hypunet.run.load_pretrained_weights import load_pretrained_weights
+from hypunet.training.network_training.hypunetHyperTrainer import hypunetHyperTrainer
+from hypunet.utilities.task_name_id_conversion import convert_id_to_task_name
 
 
 class ParseKwargs(argparse.Action):
@@ -58,13 +58,13 @@ def main():
                              "this is not necessary. Deterministic training will make you overfit to some random seed. "
                              "Don't use that.",
                         required=False, default=False, action="store_true")
-    parser.add_argument("--npz", required=False, default=False, action="store_true", help="if set then nnUNet will "
+    parser.add_argument("--npz", required=False, default=False, action="store_true", help="if set then hypunet will "
                                                                                           "export npz files of "
                                                                                           "predicted segmentations "
                                                                                           "in the validation as well. "
                                                                                           "This is needed to run the "
                                                                                           "ensembling step so unless "
-                                                                                          "you are developing nnUNet "
+                                                                                          "you are developing hypunet "
                                                                                           "you should enable this")
     parser.add_argument("--find_lr", required=False, default=False, action="store_true",
                         help="not used here, just for fun")
@@ -82,7 +82,7 @@ def main():
                         help="Running postprocessing on each fold only makes sense when developing with nnU-Net and "
                              "closely observing the model performance on specific configurations. You do not need it "
                              "when applying nnU-Net because the postprocessing for this will be determined only once "
-                             "all five folds have been trained and nnUNet_find_best_configuration is called. Usually "
+                             "all five folds have been trained and hypunet_find_best_configuration is called. Usually "
                              "running postprocessing on each fold is computationally cheap, but some users have "
                              "reported issues with very large images. If your images are large (>600x600x600 voxels) "
                              "you should consider setting this flag.")
@@ -154,13 +154,13 @@ def main():
     trainer_class = get_default_configuration(network, task, network_trainer, plans_identifier)
 
     if trainer_class is None:
-        raise RuntimeError("Could not find trainer class in nnunet.training.network_training")
+        raise RuntimeError("Could not find trainer class in hypunet.training.network_training")
 
     if kwargs is not None:
         print('Using additional kwargs: ')
         for key in kwargs.keys():
             print(key+': ', kwargs[key])
-        if issubclass(trainer_class, nnUNetHyperTrainer):
+        if issubclass(trainer_class, hypunetHyperTrainer):
             trainer = trainer_class(plans_file, fold, output_folder=output_folder_name, dataset_directory=dataset_directory,
                                     batch_dice=batch_dice, stage=stage, unpack_data=decompress_data,
                                     deterministic=deterministic,
@@ -171,7 +171,7 @@ def main():
                                     deterministic=deterministic,
                                     fp16=run_mixed_precision, hyper_depth=hyper_depth, meta_dim=meta_dim, **kwargs)
     else:
-        if issubclass(trainer_class, nnUNetHyperTrainer):
+        if issubclass(trainer_class, hypunetHyperTrainer):
             trainer = trainer_class(plans_file, fold, output_folder=output_folder_name, dataset_directory=dataset_directory,
                                     batch_dice=batch_dice, stage=stage, unpack_data=decompress_data,
                                     deterministic=deterministic,

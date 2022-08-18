@@ -25,11 +25,11 @@ from batchgenerators.transforms.spatial_transforms import MirrorTransform
 from batchgenerators.transforms.spatial_transforms import SpatialTransform_2
 from batchgenerators.transforms.utility_transforms import RemoveLabelTransform, RenameTransform, NumpyToTensor
 
-from nnunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
+from hypunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
     MaskTransform, ConvertSegmentationToRegionsTransform
-from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params
-from nnunet.training.data_augmentation.downsampling import DownsampleSegForDSTransform3, DownsampleSegForDSTransform2
-from nnunet.training.data_augmentation.pyramid_augmentations import MoveSegAsOneHotToData, \
+from hypunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params
+from hypunet.training.data_augmentation.downsampling import DownsampleSegForDSTransform3, DownsampleSegForDSTransform2
+from hypunet.training.data_augmentation.pyramid_augmentations import MoveSegAsOneHotToData, \
     ApplyRandomBinaryOperatorTransform, \
     RemoveRandomConnectedComponentFromOneHotEncodingTransform
 

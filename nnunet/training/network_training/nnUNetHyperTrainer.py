@@ -26,26 +26,26 @@ from batchgenerators.utilities.file_and_folder_operations import *
 from torch import nn
 from torch.optim import lr_scheduler
 
-import nnunet
-from nnunet.configuration import default_num_threads
-from nnunet.evaluation.evaluator import aggregate_scores
-from nnunet.inference.segmentation_export import save_segmentation_nifti_from_softmax
-from nnunet.network_architecture.generic_UNet import Generic_UNet
-from nnunet.network_architecture.initialization import InitWeights_He
-from nnunet.network_architecture.neural_network import SegmentationNetwork
-from nnunet.postprocessing.connected_components import determine_postprocessing
-from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params, \
+import hypunet
+from hypunet.configuration import default_num_threads
+from hypunet.evaluation.evaluator import aggregate_scores
+from hypunet.inference.segmentation_export import save_segmentation_nifti_from_softmax
+from hypunet.network_architecture.generic_UNet import Generic_UNet
+from hypunet.network_architecture.initialization import InitWeights_He
+from hypunet.network_architecture.neural_network import SegmentationNetwork
+from hypunet.postprocessing.connected_components import determine_postprocessing
+from hypunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params, \
     default_2D_augmentation_params, get_default_augmentation, get_patch_size
-from nnunet.training.dataloading.dataset_loading import load_dataset, DataLoader3D, DataLoader2D, unpack_dataset
-from nnunet.training.loss_functions.dice_loss import DC_and_CE_loss
-from nnunet.training.network_training.hypernetwork_trainer import HyperNetworkTrainer
-from nnunet.utilities.nd_softmax import softmax_helper
-from nnunet.utilities.tensor_utilities import sum_tensor
+from hypunet.training.dataloading.dataset_loading import load_dataset, DataLoader3D, DataLoader2D, unpack_dataset
+from hypunet.training.loss_functions.dice_loss import DC_and_CE_loss
+from hypunet.training.network_training.hypernetwork_trainer import HyperNetworkTrainer
+from hypunet.utilities.nd_softmax import softmax_helper
+from hypunet.utilities.tensor_utilities import sum_tensor
 
 matplotlib.use("agg")
 
 
-class nnUNetHyperTrainer(HyperNetworkTrainer):
+class hypunetHyperTrainer(HyperNetworkTrainer):
     def __init__(self, plans_file, fold, output_folder=None, dataset_directory=None, batch_dice=True, stage=None,
                  unpack_data=True, deterministic=True, fp16=False, hyper_depth=None, meta_dim=None):
         """
@@ -69,10 +69,10 @@ class nnUNetHyperTrainer(HyperNetworkTrainer):
         :param unpack_data: if False, npz preprocessed data will not be unpacked to npy. This consumes less space but
         is considerably slower! Running unpack_data=False with 2d should never be done!
 
-        IMPORTANT: If you inherit from nnUNetTrainer and the init args change then you need to redefine self.init_args
+        IMPORTANT: If you inherit from hypunetTrainer and the init args change then you need to redefine self.init_args
         in your init accordingly. Otherwise checkpoints won't load properly!
         """
-        super(nnUNetHyperTrainer, self).__init__(deterministic, fp16, hyper_depth, meta_dim)
+        super(hypunetHyperTrainer, self).__init__(deterministic, fp16, hyper_depth, meta_dim)
         self.unpack_data = unpack_data
         self.init_args = (plans_file, fold, output_folder, dataset_directory, batch_dice, stage, unpack_data,
                           deterministic, fp16)
@@ -314,7 +314,7 @@ class nnUNetHyperTrainer(HyperNetworkTrainer):
 
     def run_training(self):
         self.save_debug_information()
-        super(nnUNetHyperTrainer, self).run_training()
+        super(hypunetHyperTrainer, self).run_training()
 
     def load_plans_file(self):
         """
@@ -420,7 +420,7 @@ class nnUNetHyperTrainer(HyperNetworkTrainer):
         :param input_files:
         :return:
         """
-        from nnunet.training.model_restore import recursive_find_python_class
+        from hypunet.training.model_restore import recursive_find_python_class
         preprocessor_name = self.plans.get('preprocessor_name')
         if preprocessor_name is None:
             if self.threeD:
@@ -429,10 +429,10 @@ class nnUNetHyperTrainer(HyperNetworkTrainer):
                 preprocessor_name = "PreprocessorFor2D"
 
         print("using preprocessor", preprocessor_name)
-        preprocessor_class = recursive_find_python_class([join(nnunet.__path__[0], "preprocessing")],
+        preprocessor_class = recursive_find_python_class([join(hypunet.__path__[0], "preprocessing")],
                                                          preprocessor_name,
-                                                         current_module="nnunet.preprocessing")
-        assert preprocessor_class is not None, "Could not find preprocessor %s in nnunet.preprocessing" % \
+                                                         current_module="hypunet.preprocessing")
+        assert preprocessor_class is not None, "Could not find preprocessor %s in hypunet.preprocessing" % \
                                                preprocessor_name
         preprocessor = preprocessor_class(self.normalization_schemes, self.use_mask_for_norm,
                                           self.transpose_forward, self.intensity_properties)
@@ -654,7 +654,7 @@ class nnUNetHyperTrainer(HyperNetworkTrainer):
                              json_task=task, num_threads=default_num_threads)
 
         if run_postprocessing_on_folds:
-            # in the old nnunet we would stop here. Now we add a postprocessing. This postprocessing can remove everything
+            # in the old hypunet we would stop here. Now we add a postprocessing. This postprocessing can remove everything
             # except the largest connected component for each class. To see if this improves results, we do this for all
             # classes and then rerun the evaluation. Those classes for which this resulted in an improved dice score will
             # have this applied during inference as well
@@ -732,7 +732,7 @@ class nnUNetHyperTrainer(HyperNetworkTrainer):
         self.online_eval_fn = []
 
     def save_checkpoint(self, fname, save_optimizer=True):
-        super(nnUNetHyperTrainer, self).save_checkpoint(fname, save_optimizer)
+        super(hypunetHyperTrainer, self).save_checkpoint(fname, save_optimizer)
         info = OrderedDict()
         info['init'] = self.init_args
         info['name'] = self.__class__.__name__

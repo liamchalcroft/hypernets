@@ -18,27 +18,27 @@ from typing import Tuple
 
 import numpy as np
 import torch
-from nnunet.training.data_augmentation.data_augmentation_moreDA import get_moreDA_augmentation
-from nnunet.training.loss_functions.deep_supervision import MultipleOutputLoss2
-from nnunet.utilities.to_torch import maybe_to_torch, to_cuda
-from nnunet.network_architecture.generic_UNet import Generic_UNet
-from nnunet.network_architecture.initialization import InitWeights_He
-from nnunet.network_architecture.neural_network import SegmentationNetwork
-from nnunet.training.data_augmentation.default_data_augmentation import default_2D_augmentation_params, \
+from hypunet.training.data_augmentation.data_augmentation_moreDA import get_moreDA_augmentation
+from hypunet.training.loss_functions.deep_supervision import MultipleOutputLoss2
+from hypunet.utilities.to_torch import maybe_to_torch, to_cuda
+from hypunet.network_architecture.generic_UNet import Generic_UNet
+from hypunet.network_architecture.initialization import InitWeights_He
+from hypunet.network_architecture.neural_network import SegmentationNetwork
+from hypunet.training.data_augmentation.default_data_augmentation import default_2D_augmentation_params, \
     get_patch_size, default_3D_augmentation_params
-from nnunet.training.dataloading.dataset_loading import unpack_dataset
-from nnunet.training.network_training.nnUNetHyperTrainer import nnUNetHyperTrainer
-from nnunet.utilities.nd_softmax import softmax_helper
+from hypunet.training.dataloading.dataset_loading import unpack_dataset
+from hypunet.training.network_training.hypunetHyperTrainer import hypunetHyperTrainer
+from hypunet.utilities.nd_softmax import softmax_helper
 from sklearn.model_selection import KFold
 from torch import nn
 from torch.cuda.amp import autocast
-from nnunet.training.learning_rate.poly_lr import poly_lr
+from hypunet.training.learning_rate.poly_lr import poly_lr
 from batchgenerators.utilities.file_and_folder_operations import *
 
 
-class nnUNetHyperTrainerV2(nnUNetHyperTrainer):
+class hypunetHyperTrainerV2(hypunetHyperTrainer):
     """
-    Info for Fabian: same as internal nnUNetTrainerV2_2
+    Info for Fabian: same as internal hypunetTrainerV2_2
     """
 
     def __init__(self, plans_file, fold, output_folder=None, dataset_directory=None, batch_dice=True, stage=None,
@@ -362,7 +362,7 @@ class nnUNetHyperTrainerV2(nnUNetHyperTrainer):
         super().on_epoch_end()
         continue_training = self.epoch < self.max_num_epochs
 
-        # it can rarely happen that the momentum of nnUNetTrainerV2 is too high for some dataset. If at epoch 100 the
+        # it can rarely happen that the momentum of hypunetTrainerV2 is too high for some dataset. If at epoch 100 the
         # estimated validation Dice is still 0 then we reduce the momentum from 0.99 to 0.95
         if self.epoch == 100:
             if self.all_val_eval_metrics[-1] == 0:

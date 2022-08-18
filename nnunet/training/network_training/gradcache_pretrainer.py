@@ -19,7 +19,7 @@ import sys
 
 import matplotlib
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.network_architecture.neural_network import SegmentationNetwork
+from hypunet.network_architecture.neural_network import SegmentationNetwork
 from torch import nn
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import _LRScheduler
@@ -36,8 +36,8 @@ import torch.backends.cudnn as cudnn
 from abc import abstractmethod
 from datetime import datetime
 from tqdm import trange
-from nnunet.utilities.to_torch import maybe_to_torch, to_cuda
-from nnunet.network_architecture.custom_modules.hyper import HyperNet
+from hypunet.utilities.to_torch import maybe_to_torch, to_cuda
+from hypunet.network_architecture.custom_modules.hyper import HyperNet
 
 from grad_cache.functional import cached, cat_input_tensor
 from solo.utils.knn import WeightedKNNClassifier
@@ -119,8 +119,8 @@ class GradCachePreTrainer(object):
         self.deterministic = deterministic
 
         self.use_progress_bar = True
-        if 'nnunet_use_progress_bar' in os.environ.keys():
-            self.use_progress_bar = bool(int(os.environ['nnunet_use_progress_bar']))
+        if 'hypunet_use_progress_bar' in os.environ.keys():
+            self.use_progress_bar = bool(int(os.environ['hypunet_use_progress_bar']))
 
         ################# Settings for saving checkpoints ##################################
         self.save_every = 50
@@ -359,7 +359,7 @@ class GradCachePreTrainer(object):
 
     def plot_network_architecture(self):
         """
-        can be implemented (see nnUNetTrainer) but does not have to. Not implemented here because it imposes stronger
+        can be implemented (see hypunetTrainer) but does not have to. Not implemented here because it imposes stronger
         assumptions on the presence of class variables
         :return:
         """
@@ -646,7 +646,7 @@ class GradCachePreTrainer(object):
 class NetworkPreTrainer(object):
     def __init__(self, deterministic=True, fp16=False, hyper_depth=None, meta_dim=2):
         """
-        Modification of nnUNet's NetworkTrainer class - no val/segmentation steps and added options relevant to SSL.
+        Modification of hypunet's NetworkTrainer class - no val/segmentation steps and added options relevant to SSL.
 
         What you need to override (WIP):
         - __init__
@@ -712,8 +712,8 @@ class NetworkPreTrainer(object):
         self.deterministic = deterministic
 
         self.use_progress_bar = True
-        if 'nnunet_use_progress_bar' in os.environ.keys():
-            self.use_progress_bar = bool(int(os.environ['nnunet_use_progress_bar']))
+        if 'hypunet_use_progress_bar' in os.environ.keys():
+            self.use_progress_bar = bool(int(os.environ['hypunet_use_progress_bar']))
 
         ################# Settings for saving checkpoints ##################################
         self.save_every = 50
@@ -957,7 +957,7 @@ class NetworkPreTrainer(object):
 
     def plot_network_architecture(self):
         """
-        can be implemented (see nnUNetTrainer) but does not have to. Not implemented here because it imposes stronger
+        can be implemented (see hypunetTrainer) but does not have to. Not implemented here because it imposes stronger
         assumptions on the presence of class variables
         :return:
         """

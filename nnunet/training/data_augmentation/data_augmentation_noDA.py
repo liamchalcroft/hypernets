@@ -18,9 +18,9 @@ from batchgenerators.transforms.channel_selection_transforms import DataChannelS
     SegChannelSelectionTransform
 from batchgenerators.transforms.utility_transforms import RemoveLabelTransform, RenameTransform, NumpyToTensor
 
-from nnunet.training.data_augmentation.custom_transforms import ConvertSegmentationToRegionsTransform
-from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params
-from nnunet.training.data_augmentation.downsampling import DownsampleSegForDSTransform3, DownsampleSegForDSTransform2
+from hypunet.training.data_augmentation.custom_transforms import ConvertSegmentationToRegionsTransform
+from hypunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params
+from hypunet.training.data_augmentation.downsampling import DownsampleSegForDSTransform3, DownsampleSegForDSTransform2
 
 try:
     from batchgenerators.dataloading.nondet_multi_threaded_augmenter import NonDetMultiThreadedAugmenter
