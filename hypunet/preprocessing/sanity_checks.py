@@ -13,6 +13,7 @@
 #    limitations under the License.
 
 
+from ctypes import Union
 from multiprocessing import Pool
 
 import SimpleITK as sitk
@@ -76,7 +77,7 @@ def verify_same_geometry(img_1: sitk.Image, img_2: sitk.Image):
         return False
 
 
-def verify_contains_only_expected_labels(itk_img: str, valid_labels: (tuple, list)):
+def verify_contains_only_expected_labels(itk_img: str, valid_labels: Union(tuple, list)):
     img_npy = sitk.GetArrayFromImage(sitk.ReadImage(itk_img))
     uniques = np.unique(img_npy)
     invalid_uniques = [i for i in uniques if i not in valid_labels]
