@@ -255,7 +255,7 @@ class GenericPreprocessor(object):
         self,
         normalization_scheme_per_modality,
         use_nonzero_mask,
-        transpose_forward: (tuple, list),
+        transpose_forward,
         intensityproperties=None,
     ):
         """
@@ -549,7 +549,7 @@ class GenericPreprocessor_linearResampling(GenericPreprocessor):
         self,
         normalization_scheme_per_modality,
         use_nonzero_mask,
-        transpose_forward: (tuple, list),
+        transpose_forward,
         intensityproperties=None,
     ):
         super().__init__(
@@ -794,7 +794,7 @@ class PreprocessorFor2D(GenericPreprocessor):
         self,
         normalization_scheme_per_modality,
         use_nonzero_mask,
-        transpose_forward: (tuple, list),
+        transpose_forward,
         intensityproperties=None,
     ):
         super(PreprocessorFor2D, self).__init__(
