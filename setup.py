@@ -3,8 +3,8 @@ from setuptools import setup, find_namespace_packages
 setup(
     name="hypunet",
     packages=find_namespace_packages(include=["hypunet", "hypunet.*"]),
-    version="1.7.0",
-    description="hypunet. Hypernetwork adaptation of hypunet.",
+    version="0.0.1",
+    description="hypunet. Hypernetwork adaptation of nnUNet.",
     url="https://github.com/liamchalcroft/hypernets",
     author="",
     author_email="",
