@@ -44,6 +44,7 @@ def main():
         "-hyper",
         "--hyper_depth",
         help="Encoder depth to control with hypernetworks",
+        type=int,
         default=None,
         required=False,
     )
@@ -51,6 +52,7 @@ def main():
         "-meta",
         "--meta_dim",
         help="Dimensions of metadata for hypernetworks.",
+        type=int,
         default=None,
         required=False,
     )
