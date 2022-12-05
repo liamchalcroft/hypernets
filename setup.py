@@ -31,7 +31,7 @@ setup(
     entry_points={
         "console_scripts": [
             "hypunet_convert_decathlon_task = hypunet.experiment_planning.hypunet_convert_decathlon_task:main",
-            "hypunet_plan_and_preprocess = hypunet.experiment_planning.hypunet_plan_and_preprocess:main",
+            "hypunet_plan_and_preprocess = hypunet.experiment_planning.plan_and_preprocess:main",
             "hypunet_train = hypunet.run.run_training:main",
             "hypunet_train_DP = hypunet.run.run_training_DP:main",
             "hypunet_train_DDP = hypunet.run.run_training_DDP:main",
