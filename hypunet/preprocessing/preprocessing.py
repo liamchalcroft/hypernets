@@ -405,10 +405,10 @@ class GenericPreprocessor(object):
         target_spacing,
         seg_file=None,
         force_separate_z=None,
-        met_file=None,
+        meta=None,
     ):
         data, seg, properties = ImageCropper.crop_from_list_of_files(
-            data_files, met_file, seg_file
+            data_files, seg_file
         )
 
         data = data.transpose((0, *[i + 1 for i in self.transpose_forward]))
