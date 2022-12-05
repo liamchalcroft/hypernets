@@ -264,6 +264,12 @@ class ContrastivePreTrainer(NetworkPreTrainer):
             self.freeze_decoder,
             self.extractor,
         )
+        try:
+            self.network = torch.compile(self.network)
+        except:
+            print(
+                "Tried to compile Torch model. Please update to Torch 2.0 for faster model throughput."
+            )
         if torch.cuda.is_available():
             self.network.cuda()
         self.network.inference_apply_nonlin = softmax_helper

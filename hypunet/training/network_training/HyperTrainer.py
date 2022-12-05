@@ -354,6 +354,12 @@ class HyperTrainer(HyperNetworkTrainer):
             True,
             True,
         )
+        try:
+            self.network = torch.compile(self.network)
+        except:
+            print(
+                "Tried to compile Torch model. Please update to Torch 2.0 for faster model throughput."
+            )
         self.network.inference_apply_nonlin = softmax_helper
 
         if torch.cuda.is_available():
