@@ -14,6 +14,7 @@ import torch.nn.functional as F
 # implemented for PyTorch / FastAI by lessw2020
 # github: https://github.com/lessw2020/mish
 
+
 class Mish(nn.Module):
     def __init__(self):
         super().__init__()

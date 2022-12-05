@@ -26,7 +26,14 @@ class RemoveKeyTransform(AbstractTransform):
 
 
 class MaskTransform(AbstractTransform):
-    def __init__(self, dct_for_where_it_was_used, mask_idx_in_seg=1, set_outside_to=0, data_key="data", seg_key="seg"):
+    def __init__(
+        self,
+        dct_for_where_it_was_used,
+        mask_idx_in_seg=1,
+        set_outside_to=0,
+        data_key="data",
+        seg_key="seg",
+    ):
         """
         data[mask < 0] = 0
         Sets everything outside the mask to 0. CAREFUL! outside is defined as < 0, not =0 (in the Mask)!!!
@@ -46,7 +53,9 @@ class MaskTransform(AbstractTransform):
     def __call__(self, **data_dict):
         seg = data_dict.get(self.seg_key)
         if seg is None or seg.shape[1] < self.mask_idx_in_seg:
-            raise Warning("mask not found, seg may be missing or seg[:, mask_idx_in_seg] may not exist")
+            raise Warning(
+                "mask not found, seg may be missing or seg[:, mask_idx_in_seg] may not exist"
+            )
         data = data_dict.get(self.data_key)
         for b in range(data.shape[0]):
             mask = seg[b, self.mask_idx_in_seg]
@@ -58,22 +67,30 @@ class MaskTransform(AbstractTransform):
 
 
 def convert_3d_to_2d_generator(data_dict):
-    shp = data_dict['data'].shape
-    data_dict['data'] = data_dict['data'].reshape((shp[0], shp[1] * shp[2], shp[3], shp[4]))
-    data_dict['orig_shape_data'] = shp
-    shp = data_dict['seg'].shape
-    data_dict['seg'] = data_dict['seg'].reshape((shp[0], shp[1] * shp[2], shp[3], shp[4]))
-    data_dict['orig_shape_seg'] = shp
+    shp = data_dict["data"].shape
+    data_dict["data"] = data_dict["data"].reshape(
+        (shp[0], shp[1] * shp[2], shp[3], shp[4])
+    )
+    data_dict["orig_shape_data"] = shp
+    shp = data_dict["seg"].shape
+    data_dict["seg"] = data_dict["seg"].reshape(
+        (shp[0], shp[1] * shp[2], shp[3], shp[4])
+    )
+    data_dict["orig_shape_seg"] = shp
     return data_dict
 
 
 def convert_2d_to_3d_generator(data_dict):
-    shp = data_dict['orig_shape_data']
-    current_shape = data_dict['data'].shape
-    data_dict['data'] = data_dict['data'].reshape((shp[0], shp[1], shp[2], current_shape[-2], current_shape[-1]))
-    shp = data_dict['orig_shape_seg']
-    current_shape_seg = data_dict['seg'].shape
-    data_dict['seg'] = data_dict['seg'].reshape((shp[0], shp[1], shp[2], current_shape_seg[-2], current_shape_seg[-1]))
+    shp = data_dict["orig_shape_data"]
+    current_shape = data_dict["data"].shape
+    data_dict["data"] = data_dict["data"].reshape(
+        (shp[0], shp[1], shp[2], current_shape[-2], current_shape[-1])
+    )
+    shp = data_dict["orig_shape_seg"]
+    current_shape_seg = data_dict["seg"].shape
+    data_dict["seg"] = data_dict["seg"].reshape(
+        (shp[0], shp[1], shp[2], current_shape_seg[-2], current_shape_seg[-1])
+    )
     return data_dict
 
 
@@ -94,7 +111,13 @@ class Convert2DTo3DTransform(AbstractTransform):
 
 
 class ConvertSegmentationToRegionsTransform(AbstractTransform):
-    def __init__(self, regions: dict, seg_key: str = "seg", output_key: str = "seg", seg_channel: int = 0):
+    def __init__(
+        self,
+        regions: dict,
+        seg_key: str = "seg",
+        output_key: str = "seg",
+        seg_channel: int = 0,
+    ):
         """
         regions are tuple of tuples where each inner tuple holds the class indices that are merged into one region, example:
         regions= ((1, 2), (2, )) will result in 2 regions: one covering the region of labels 1&2 and the other just 2
@@ -122,8 +145,16 @@ class ConvertSegmentationToRegionsTransform(AbstractTransform):
             data_dict[self.output_key] = region_output
         return data_dict
 
+
 class MoveSegAsOneHotToData(AbstractTransform):
-    def __init__(self, channel_id, all_seg_labels, key_origin="seg", key_target="data", remove_from_origin=True):
+    def __init__(
+        self,
+        channel_id,
+        all_seg_labels,
+        key_origin="seg",
+        key_target="data",
+        remove_from_origin=True,
+    ):
         self.remove_from_origin = remove_from_origin
         self.all_seg_labels = all_seg_labels
         self.key_target = key_target
@@ -133,15 +164,19 @@ class MoveSegAsOneHotToData(AbstractTransform):
     def __call__(self, **data_dict):
         origin = data_dict.get(self.key_origin)
         target = data_dict.get(self.key_target)
-        seg = origin[:, self.channel_id:self.channel_id+1]
-        seg_onehot = np.zeros((seg.shape[0], len(self.all_seg_labels), *seg.shape[2:]), dtype=seg.dtype)
+        seg = origin[:, self.channel_id : self.channel_id + 1]
+        seg_onehot = np.zeros(
+            (seg.shape[0], len(self.all_seg_labels), *seg.shape[2:]), dtype=seg.dtype
+        )
         for i, l in enumerate(self.all_seg_labels):
             seg_onehot[:, i][seg[:, 0] == l] = 1
         target = np.concatenate((target, seg_onehot), 1)
         data_dict[self.key_target] = target
 
         if self.remove_from_origin:
-            remaining_channels = [i for i in range(origin.shape[1]) if i != self.channel_id]
+            remaining_channels = [
+                i for i in range(origin.shape[1]) if i != self.channel_id
+            ]
             origin = origin[:, remaining_channels]
             data_dict[self.key_origin] = origin
         return data_dict

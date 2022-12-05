@@ -24,16 +24,17 @@ class HyperNet(tnn.Module):
     #   argument (like in optimizers) that let the user specify
     #   which parameters are dynamic.
 
-    def __init__(self,
-                 in_features: int,
-                 network: tnn.Module,
-                 nodes: Optional[Sequence[str or tnn.Module]] = None,
-                 layers: Sequence[int] = (64,)*4,
-                 activation: tnn.Module = tnn.ReLU,
-                 final_activation: tnn.Module = None,
-                 dropout: float = 0.,
-                 norm: tnn.Module = None
-                 ):
+    def __init__(
+        self,
+        in_features: int,
+        network: tnn.Module,
+        nodes: Optional[Sequence[str or tnn.Module]] = None,
+        layers: Sequence[int] = (64,) * 4,
+        activation: tnn.Module = tnn.ReLU,
+        final_activation: tnn.Module = None,
+        dropout: float = 0.0,
+        norm: tnn.Module = None,
+    ):
         """
         Parameters
         ----------
@@ -72,21 +73,21 @@ class HyperNet(tnn.Module):
         layers = [in_features, *layers]
         hyper = []
 
-        for i in range(len(layers)-1):
-            hyper.append(tnn.Linear(layers[i], layers[i+1]))
-            if dropout>0:
+        for i in range(len(layers) - 1):
+            hyper.append(tnn.Linear(layers[i], layers[i + 1]))
+            if dropout > 0:
                 hyper.append(tnn.Dropout1d(dropout))
             if norm is not None:
                 hyper.append(norm())
             hyper.append(activation())
 
         hyper.append(tnn.Linear(layers[-1], nb_weights))
-        if dropout>0:
+        if dropout > 0:
             hyper.append(tnn.Dropout1d(dropout))
         if norm is not None:
             hyper.append(norm())
         if final_activation is not None:
-            hyper.append(final_activation())   
+            hyper.append(final_activation())
 
         self.hyper = tnn.Sequential(*hyper)
 
@@ -100,37 +101,40 @@ class HyperNet(tnn.Module):
         all_shapes = [p.shape for p in self._get_weights(self.network)]
         for shape in all_shapes:
             numel = np.prod(shape)
-            w = x[offset:offset+numel].reshape(shape)
+            w = x[offset : offset + numel].reshape(shape)
             offset += numel
             yield w
 
     def _prefix_in_nodes(self, prefix, nodes):
         """Check if a module full-name is in the list of mutable nodes"""
+
         def _isequal(x, y):
             if x == y:
                 return True
-            elif y == '*':
+            elif y == "*":
                 return True
             return False
 
         for node in nodes:
             if not isinstance(node, str):
                 continue
-            prefix = prefix.split('.')
-            node = node.split('.')
-            if '**' in node:
-                node = (node[:node.index('**')]
-                        + ['*'] * max(0, len(prefix)-len(nodes))
-                        + node[node.index('**')+1:])
-            if '**' in node:
-                raise ValueError('There can be only one ** ellipsis in pattern')
+            prefix = prefix.split(".")
+            node = node.split(".")
+            if "**" in node:
+                node = (
+                    node[: node.index("**")]
+                    + ["*"] * max(0, len(prefix) - len(nodes))
+                    + node[node.index("**") + 1 :]
+                )
+            if "**" in node:
+                raise ValueError("There can be only one ** ellipsis in pattern")
             if len(node) != len(prefix):
                 continue
             if all(_isequal(x, y) for x, y in zip(prefix, node)):
                 return True
         return False
 
-    def preprocess_network_(self, x, memo=None, nodes=None, prefix=''):
+    def preprocess_network_(self, x, memo=None, nodes=None, prefix=""):
         """Convert all "generated" parameters into buffers
         Parameters
         ----------
@@ -161,14 +165,14 @@ class HyperNet(tnn.Module):
                 old = getattr(x, name)
                 delattr(x, name)
                 x.register_buffer(name, torch.Tensor(old.detach()))
-                if not hasattr(x, 'generated_parameters'):
-                    setattr(x, 'generated_parameters', [])
+                if not hasattr(x, "generated_parameters"):
+                    setattr(x, "generated_parameters", [])
                 x.generated_parameters.append(name)
 
         memo.add(x)
         for name, module in x.named_children():
             # print(name, module)
-            subprefix = prefix + ('.' if prefix else '') + name
+            subprefix = prefix + ("." if prefix else "") + name
             # print(subprefix)
             self.preprocess_network_(module, memo, nodes, subprefix)
 
@@ -186,12 +190,12 @@ class HyperNet(tnn.Module):
         if x in memo:
             return
 
-        for name in getattr(x, 'generated_parameters', []):
+        for name in getattr(x, "generated_parameters", []):
             old = getattr(x, name)
             delattr(x, name)
             setattr(x, name, tnn.Parameter(old.detach()))
-        if hasattr(x, 'generated_parameters'):
-            delattr(x, 'generated_parameters')
+        if hasattr(x, "generated_parameters"):
+            delattr(x, "generated_parameters")
 
         memo.add(x)
         for name, module in x.named_children():
@@ -215,7 +219,7 @@ class HyperNet(tnn.Module):
         if x in memo:
             return
 
-        for name in getattr(x, 'generated_parameters', []):
+        for name in getattr(x, "generated_parameters", []):
             yield getattr(x, name)
 
         memo.add(x)
@@ -239,7 +243,7 @@ class HyperNet(tnn.Module):
         if x in memo:
             return
 
-        for name in getattr(x, 'generated_parameters', []):
+        for name in getattr(x, "generated_parameters", []):
             setattr(x, name, next(w))
 
         memo.add(x)
@@ -259,7 +263,6 @@ class HyperNet(tnn.Module):
         memo.add(x)
         for name, module in x.named_children():
             self.detach_buffers_(module, memo)
-
 
     def make_networks(self, feat):
         """Generate networks from features
@@ -307,7 +310,7 @@ class HyperNet(tnn.Module):
         for batch_weights, batch_input in zip(weights, x):
             self._set_weights(self.network, self._make_chunks(batch_weights))
             output.append(self.network(batch_input[None]))
-        if isinstance(output[0], (list,tuple)):
+        if isinstance(output[0], (list, tuple)):
             output = [torch.cat(list(output_)) for output_ in zip(*output)]
         else:
             output = torch.cat(output)
