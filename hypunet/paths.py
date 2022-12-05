@@ -36,8 +36,8 @@ preprocessing_output_dir = (
     else None
 )
 network_training_output_dir_base = (
-    os.path.join(os.environ["RESULTS_FOLDER"])
-    if "RESULTS_FOLDER" in os.environ.keys()
+    os.path.join(os.environ["hypunet_results_folder"])
+    if "hypunet_results_folder" in os.environ.keys()
     else None
 )
 
@@ -70,7 +70,7 @@ if network_training_output_dir_base is not None:
     maybe_mkdir_p(network_training_output_dir)
 else:
     print(
-        "RESULTS_FOLDER is not defined and hypunet cannot be used for training or "
+        "hypunet_results_folder is not defined and hypunet cannot be used for training or "
         "inference. If this is not intended behavior, please read documentation/setting_up_paths.md for information on how to set this "
         "up."
     )

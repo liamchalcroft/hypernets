@@ -284,7 +284,7 @@ def download_and_install_pretrained_model_by_name(taskname):
 def download_and_install_from_url(url):
     assert network_training_output_dir is not None, (
         "Cannot install model because network_training_output_dir is not "
-        "set (RESULTS_FOLDER missing as environment variable, see "
+        "set (hypunet_results_folder missing as environment variable, see "
         "Installation instructions)"
     )
     print("Downloading pretrained model from url:", url)

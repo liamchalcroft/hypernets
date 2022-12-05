@@ -20,6 +20,7 @@ from hypunet.paths import (
     network_training_output_dir,
 )
 from batchgenerators.utilities.file_and_folder_operations import *
+import os
 import numpy as np
 
 
@@ -82,8 +83,8 @@ def convert_id_to_task_name(task_id: int):
                 os.environ.get("hypunet_preprocessed")
                 if os.environ.get("hypunet_preprocessed") is not None
                 else "None",
-                os.environ.get("RESULTS_FOLDER")
-                if os.environ.get("RESULTS_FOLDER") is not None
+                os.environ.get("hypunet_results_folder")
+                if os.environ.get("hypunet_results_folder") is not None
                 else "None",
                 os.environ.get("hypunet_raw_data_base")
                 if os.environ.get("hypunet_raw_data_base") is not None
