@@ -32,7 +32,7 @@ from hypunet.training.data_augmentation.default_data_augmentation import (
     default_3D_augmentation_params,
 )
 from hypunet.training.dataloading.dataset_loading import unpack_dataset
-from hypunet.training.network_training.hypunetHyperTrainer import hypunetHyperTrainer
+from hypunet.training.network_training.HyperTrainer import HyperTrainer
 from hypunet.utilities.nd_softmax import softmax_helper
 from sklearn.model_selection import KFold
 from torch import nn
@@ -41,7 +41,7 @@ from hypunet.training.learning_rate.poly_lr import poly_lr
 from batchgenerators.utilities.file_and_folder_operations import *
 
 
-class hypunetHyperTrainerV2(hypunetHyperTrainer):
+class HyperTrainerV2(HyperTrainer):
     """
     Info for Fabian: same as internal hypunetTrainerV2_2
     """

@@ -71,7 +71,7 @@ def main():
         task = convert_id_to_task_name(task_id)
 
     if trainer is None:
-        trainer = "hypunetHyperTrainerV2"
+        trainer = "HyperTrainerV2"
 
     folder = get_output_folder_name(model, task, trainer, plans, None)
 

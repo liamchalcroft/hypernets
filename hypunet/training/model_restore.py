@@ -17,7 +17,7 @@ import torch
 from batchgenerators.utilities.file_and_folder_operations import *
 import importlib
 import pkgutil
-from hypunet.training.network_training.hypunetHyperTrainer import hypunetHyperTrainer
+from hypunet.training.network_training.HyperTrainer import HyperTrainer
 
 
 def recursive_find_python_class(folder, trainer_name, current_module):
@@ -87,7 +87,7 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None):
             "\nDebug info: \ncheckpoint file: %s\nName of trainer: %s "
             % (checkpoint, name)
         )
-    assert issubclass(tr, hypunetHyperTrainer), (
+    assert issubclass(tr, HyperTrainer), (
         "The network trainer was found but is not a subclass of hypunetTrainer. "
         "Please make it so!"
     )

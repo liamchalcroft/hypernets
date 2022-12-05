@@ -34,7 +34,7 @@ from hypunet.postprocessing.connected_components import (
     load_postprocessing,
 )
 from hypunet.training.model_restore import load_model_and_checkpoint_files
-from hypunet.training.network_training.hypunetHyperTrainer import hypunetHyperTrainer
+from hypunet.training.network_training.HyperTrainer import HyperTrainer
 from hypunet.utilities.one_hot_encoding import to_one_hot
 
 
@@ -119,7 +119,7 @@ def preprocess_multithreaded(
     num_processes = min(len(list_of_lists), num_processes)
 
     classes = list(range(1, trainer.num_classes))
-    assert isinstance(trainer, hypunetHyperTrainer)
+    assert isinstance(trainer, HyperTrainer)
     q = Queue(1)
     processes = []
     for i in range(num_processes):

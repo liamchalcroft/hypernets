@@ -19,7 +19,7 @@ from batchgenerators.utilities.file_and_folder_operations import maybe_mkdir_p, 
 my_output_identifier = "hypunet"
 default_plans_identifier = "hypunetPlansv2.1"
 default_data_identifier = "hypunetData_plans_v2.1"
-default_trainer = "hypunetHyperTrainerV2"
+default_trainer = "HyperTrainerV2"
 
 """
 PLEASE READ paths.md FOR INFORMATION TO HOW TO SET THIS UP

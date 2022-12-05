@@ -19,7 +19,7 @@ from batchgenerators.utilities.file_and_folder_operations import *
 def pretend_to_be_hypunetTrainer(
     folder, checkpoints=("model_best.model.pkl", "model_final_checkpoint.model.pkl")
 ):
-    pretend_to_be_other_trainer(folder, "hypunetHyperTrainer", checkpoints)
+    pretend_to_be_other_trainer(folder, "HyperTrainer", checkpoints)
 
 
 def pretend_to_be_other_trainer(

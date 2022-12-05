@@ -54,7 +54,7 @@ from hypunet.utilities.tensor_utilities import sum_tensor
 matplotlib.use("agg")
 
 
-class hypunetHyperTrainer(HyperNetworkTrainer):
+class HyperTrainer(HyperNetworkTrainer):
     def __init__(
         self,
         plans_file,
@@ -93,9 +93,7 @@ class hypunetHyperTrainer(HyperNetworkTrainer):
         IMPORTANT: If you inherit from hypunetTrainer and the init args change then you need to redefine self.init_args
         in your init accordingly. Otherwise checkpoints won't load properly!
         """
-        super(hypunetHyperTrainer, self).__init__(
-            deterministic, fp16, hyper_depth, meta_dim
-        )
+        super(HyperTrainer, self).__init__(deterministic, fp16, hyper_depth, meta_dim)
         self.unpack_data = unpack_data
         self.init_args = (
             plans_file,
@@ -422,7 +420,7 @@ class hypunetHyperTrainer(HyperNetworkTrainer):
 
     def run_training(self):
         self.save_debug_information()
-        super(hypunetHyperTrainer, self).run_training()
+        super(HyperTrainer, self).run_training()
 
     def load_plans_file(self):
         """
@@ -1029,7 +1027,7 @@ class hypunetHyperTrainer(HyperNetworkTrainer):
         self.online_eval_fn = []
 
     def save_checkpoint(self, fname, save_optimizer=True):
-        super(hypunetHyperTrainer, self).save_checkpoint(fname, save_optimizer)
+        super(HyperTrainer, self).save_checkpoint(fname, save_optimizer)
         info = OrderedDict()
         info["init"] = self.init_args
         info["name"] = self.__class__.__name__

@@ -16,8 +16,8 @@ import numpy as np
 import torch
 from torch import nn
 from hypunet.utilities.nd_softmax import softmax_helper
-from hypunet.training.network_training.hypunetHyperTrainerV2 import (
-    hypunetHyperTrainerV2,
+from hypunet.training.network_training.HyperTrainerV2 import (
+    HyperTrainerV2,
 )
 
 

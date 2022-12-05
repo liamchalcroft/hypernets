@@ -18,7 +18,7 @@ from batchgenerators.utilities.file_and_folder_operations import *
 from hypunet.run.default_configuration import get_default_configuration
 from hypunet.paths import default_plans_identifier
 from hypunet.run.load_pretrained_weights import load_pretrained_weights
-from hypunet.training.network_training.hypunetHyperTrainer import hypunetHyperTrainer
+from hypunet.training.network_training.HyperTrainer import HyperTrainer
 from hypunet.utilities.task_name_id_conversion import convert_id_to_task_name
 
 
@@ -251,7 +251,7 @@ def main():
         print("Using additional kwargs: ")
         for key in kwargs.keys():
             print(key + ": ", kwargs[key])
-        if issubclass(trainer_class, hypunetHyperTrainer):
+        if issubclass(trainer_class, HyperTrainer):
             trainer = trainer_class(
                 plans_file,
                 fold,
@@ -279,7 +279,7 @@ def main():
                 **kwargs
             )
     else:
-        if issubclass(trainer_class, hypunetHyperTrainer):
+        if issubclass(trainer_class, HyperTrainer):
             trainer = trainer_class(
                 plans_file,
                 fold,
