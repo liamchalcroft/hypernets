@@ -71,7 +71,12 @@ class ContrastivePreTrainer(NetworkPreTrainer):
         meta_dim=2,
     ):
 
-        super().__init__(deterministic=deterministic, fp16=fp16, hyper_depth=hyper_depth, meta_dim=meta_dim)
+        super().__init__(
+            deterministic=deterministic,
+            fp16=fp16,
+            hyper_depth=hyper_depth,
+            meta_dim=meta_dim,
+        )
 
         self.max_num_epochs = 500
         # self.initial_lr = 1e-2

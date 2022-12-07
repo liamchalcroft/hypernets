@@ -83,6 +83,8 @@ class VICRegTrainer(ContrastivePreTrainer):
             torch.nn.ReLU(),
             torch.nn.Linear(proj_hidden_dim, proj_output_dim),
         )
+        if torch.cuda.is_available():
+            self.project.cuda()
 
         self.sim_loss_weight = sim_loss_weight
         self.var_loss_weight = var_loss_weight
