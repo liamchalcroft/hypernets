@@ -172,8 +172,12 @@ class ContrastivePreTrainer(NetworkPreTrainer):
 
             self.setup_DA_params()
 
+            # self.folder_with_preprocessed_data = join(
+            #     self.plans["preprocessed_data_folder"], self.plans["data_identifier"]
+            # )
             self.folder_with_preprocessed_data = join(
-                self.plans["preprocessed_data_folder"], self.plans["data_identifier"]
+                self.dataset_directory,
+                self.plans["data_identifier"] + "_stage%d" % self.stage,
             )
             if training:
                 self.dl_tr = self.get_basic_generators()
