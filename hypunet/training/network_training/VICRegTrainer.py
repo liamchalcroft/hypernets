@@ -60,8 +60,8 @@ class VICRegTrainer(ContrastivePreTrainer):
             fp16,
             freeze_encoder,
             freeze_decoder,
-            hyper_depth,
-            meta_dim,
+            hyper_depth=hyper_depth,
+            meta_dim=meta_dim,
         )
 
         self.load_plans_file()
