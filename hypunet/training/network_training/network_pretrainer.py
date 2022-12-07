@@ -667,7 +667,7 @@ class NetworkPreTrainer(object):
                     )
                 self.optimizer.step()
 
-        self.run_online_knn(output1, output2)
+        self.run_online_knn(output1.cpu(), output2.cpu())
 
         return l.detach().cpu().numpy()
 
