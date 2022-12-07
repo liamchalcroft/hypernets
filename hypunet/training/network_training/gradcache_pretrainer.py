@@ -1122,6 +1122,12 @@ class NetworkPreTrainer(object):
             ] += self.hypernetwork.hyper.parameters()
             print(self.hypernetwork.hyper)
             print(15 * "*")
+            try:
+                self.hypernetwork = torch.compile(self.hypernetwork)
+            except:
+                print(
+                    "Tried to compile Torch model. Please update to Torch 2.0 for faster model throughput."
+                )
 
         while self.epoch < self.max_num_epochs:
             self.print_to_log_file("\nepoch: ", self.epoch)
