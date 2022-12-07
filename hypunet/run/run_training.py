@@ -20,6 +20,7 @@ from hypunet.paths import default_plans_identifier
 from hypunet.run.load_pretrained_weights import load_pretrained_weights
 from hypunet.training.network_training.HyperTrainer import HyperTrainer
 from hypunet.utilities.task_name_id_conversion import convert_id_to_task_name
+import os
 
 
 class ParseKwargs(argparse.Action):
@@ -40,6 +41,13 @@ def main():
     parser.add_argument("network_trainer")
     parser.add_argument("task", help="can be task name or task id")
     parser.add_argument("fold", help="0, 1, ..., 5 or 'all'")
+    parser.add_argument(
+        "-name",
+        "--folder_name",
+        help="Experiment name - allows for multiple sub-folders for a dataset.",
+        type=str,
+        required=True,
+    )
     parser.add_argument(
         "-hyper",
         "--hyper_depth",
@@ -243,6 +251,8 @@ def main():
         stage,
         trainer_class,
     ) = get_default_configuration(network, task, network_trainer, plans_identifier)
+
+    output_folder_name = os.path.join(output_folder_name, args.folder_name)
 
     if trainer_class is None:
         raise RuntimeError(
