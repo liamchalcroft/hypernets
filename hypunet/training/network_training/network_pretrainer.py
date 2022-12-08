@@ -515,7 +515,7 @@ class NetworkPreTrainer(object):
             out1 = torch.mean(out1.view(out1.size(0), out1.size(1), -1), dim=2)
             out2 = torch.mean(out2.view(out2.size(0), out2.size(1), -1), dim=2)
             # gt targets are the patient ID... kNN trained on latent proj of view 1 should predict the same for view 2
-            target = torch.Tensor(list(range(out1.shape[0]))).long()
+            target = torch.Tensor(list(range(out1.shape[0])), device=out1.device).long()
             knn = WeightedKNNClassifier(
                 k=2
             )  # may want to play around with number of neighbours...
@@ -667,7 +667,8 @@ class NetworkPreTrainer(object):
                     )
                 self.optimizer.step()
 
-        self.run_online_knn(output1.cpu().float(), output2.cpu().float())
+        # self.run_online_knn(output1.cpu().float(), output2.cpu().float())
+        self.run_online_knn(output1, output2)
 
         return l.detach().cpu().numpy()
 
