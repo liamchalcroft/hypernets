@@ -50,6 +50,7 @@ class VICRegTrainer(ContrastivePreTrainer):
         var_loss_weight=25.0,
         cov_loss_weight=1.0,
         detcon=False,
+        batch_size=None,
     ):
         super().__init__(
             plans_file,
@@ -62,6 +63,7 @@ class VICRegTrainer(ContrastivePreTrainer):
             freeze_decoder,
             hyper_depth=hyper_depth,
             meta_dim=meta_dim,
+            batch_size=batch_size,
         )
 
         self.load_plans_file()
@@ -161,6 +163,7 @@ class GC_VICRegTrainer(GC_ContrastivePreTrainer):
         cov_loss_weight=1.0,
         metabatch=8,
         detcon=False,
+        batch_size=None,
     ):
         super().__init__(
             plans_file,
@@ -173,6 +176,7 @@ class GC_VICRegTrainer(GC_ContrastivePreTrainer):
             freeze_decoder,
             hyper_depth,
             meta_dim,
+            batch_size=batch_size,
         )
 
         self.load_plans_file()

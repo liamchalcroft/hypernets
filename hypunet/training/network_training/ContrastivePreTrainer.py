@@ -69,6 +69,7 @@ class ContrastivePreTrainer(NetworkPreTrainer):
         freeze_decoder=True,
         hyper_depth=None,
         meta_dim=2,
+        batch_size=None,
     ):
 
         super().__init__(
@@ -103,6 +104,7 @@ class ContrastivePreTrainer(NetworkPreTrainer):
         self.freeze_decoder = freeze_decoder
         self.detcon = None
         self.extractor = True
+        self.batch_size_new = batch_size
 
         self.plans = None
 
@@ -460,7 +462,15 @@ class ContrastivePreTrainer(NetworkPreTrainer):
         self.plans = plans
 
         stage_plans = self.plans["plans_per_stage"][self.stage]
-        self.batch_size = stage_plans["batch_size"]
+        if self.batch_size_new is not None:
+            self.batch_size = self.batch_size_new
+            print(
+                "Overwriting plan batch size to use batch size of {}".format(
+                    self.batch_size_new
+                )
+            )
+        else:
+            self.batch_size = stage_plans["batch_size"]
         self.net_pool_per_axis = stage_plans["num_pool_per_axis"]
         self.patch_size = np.array(stage_plans["patch_size"]).astype(int)
         self.do_dummy_2D_aug = stage_plans["do_dummy_2D_data_aug"]
@@ -640,6 +650,7 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
         freeze_decoder=True,
         hyper_depth=None,
         meta_dim=2,
+        batch_size=None,
     ):
 
         super().__init__(deterministic, fp16, hyper_depth, meta_dim)
@@ -669,6 +680,7 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
         self.freeze_decoder = freeze_decoder
         self.detcon = None
         self.extractor = True
+        self.batch_size_new = batch_size
 
         self.plans = None
 
@@ -1024,7 +1036,15 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
         self.plans = plans
 
         stage_plans = self.plans["plans_per_stage"][self.stage]
-        self.batch_size = stage_plans["batch_size"]
+        if self.batch_size_new is not None:
+            self.batch_size = self.batch_size_new
+            print(
+                "Overwriting plan batch size to use batch size of {}".format(
+                    self.batch_size_new
+                )
+            )
+        else:
+            self.batch_size = stage_plans["batch_size"]
         self.net_pool_per_axis = stage_plans["num_pool_per_axis"]
         self.patch_size = np.array(stage_plans["patch_size"]).astype(int)
         self.do_dummy_2D_aug = stage_plans["do_dummy_2D_data_aug"]

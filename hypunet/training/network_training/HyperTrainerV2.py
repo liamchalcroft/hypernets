@@ -59,6 +59,7 @@ class HyperTrainerV2(HyperTrainer):
         fp16=False,
         hyper_depth=None,
         meta_dim=None,
+        batch_size=None,
     ):
         super().__init__(
             plans_file,
@@ -72,6 +73,7 @@ class HyperTrainerV2(HyperTrainer):
             fp16,
             hyper_depth,
             meta_dim,
+            batch_size=batch_size,
         )
         self.max_num_epochs = 1000
         self.deep_supervision_scales = None

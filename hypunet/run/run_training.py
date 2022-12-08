@@ -65,6 +65,14 @@ def main():
         required=False,
     )
     parser.add_argument(
+        "-batch",
+        "--batch_size",
+        help="Overwrite planned batch size with this int value.",
+        type=int,
+        default=None,
+        required=False,
+    )
+    parser.add_argument(
         "-val",
         "--validation_only",
         help="use this if you want to only run the validation",
@@ -201,6 +209,7 @@ def main():
 
     task = args.task
     fold = args.fold
+    batch_size = args.batch_size
     network = args.network
     network_trainer = args.network_trainer
     validation_only = args.validation_only
@@ -276,6 +285,7 @@ def main():
                 fp16=run_mixed_precision,
                 hyper_depth=hyper_depth,
                 meta_dim=meta_dim,
+                batch_size=batch_size,
                 **kwargs
             )
         else:
@@ -288,6 +298,7 @@ def main():
                 fp16=run_mixed_precision,
                 hyper_depth=hyper_depth,
                 meta_dim=meta_dim,
+                batch_size=batch_size,
                 **kwargs
             )
     else:
@@ -304,6 +315,7 @@ def main():
                 fp16=run_mixed_precision,
                 hyper_depth=hyper_depth,
                 meta_dim=meta_dim,
+                batch_size=batch_size,
             )
         else:
             trainer = trainer_class(
@@ -315,6 +327,7 @@ def main():
                 fp16=run_mixed_precision,
                 hyper_depth=hyper_depth,
                 meta_dim=meta_dim,
+                batch_size=batch_size,
             )
 
     if args.disable_saving:
