@@ -517,7 +517,7 @@ class NetworkPreTrainer(object):
             # gt targets are the patient ID... kNN trained on latent proj of view 1 should predict the same for view 2
             target = torch.Tensor(list(range(out1.shape[0]))).to(out1.device).long()
             knn = WeightedKNNClassifier(
-                k=2
+                k=20
             )  # may want to play around with number of neighbours...
             knn(
                 train_features=out1,
