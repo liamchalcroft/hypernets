@@ -575,6 +575,23 @@ class Generic_UNet(SegmentationNetwork):
             self.apply(self.weightInitializer)
             # self.apply(print_module_training_status)
 
+        if self.freeze_encoder:
+            for param in self.conv_blocks_context.parameters():
+                param.requires_grad = False
+            for param in self.td.parameters():
+                param.requires_grad = False
+
+        if self.freeze_decoder:
+            for param in self.conv_blocks_localization.parameters():
+                param.requires_grad = False
+            for param in self.tu.parameters():
+                param.requires_grad = False
+            for param in self.seg_outputs.parameters():
+                param.requires_grad = False
+            if self.upscale_logits:
+                for param in self.upscale_logits_ops.parameters():
+                    param.requires_grad = False
+
     def forward(self, x):
         skips = []
         seg_outputs = []
