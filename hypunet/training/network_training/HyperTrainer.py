@@ -115,7 +115,7 @@ class HyperTrainer(HyperNetworkTrainer):
         self.dataset_directory = dataset_directory
         self.output_folder_base = self.output_folder
         self.fold = fold
-        self.new_batch_size = batch_size
+        self.batch_size_new = batch_size
 
         self.plans = None
 
