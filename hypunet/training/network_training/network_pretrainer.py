@@ -517,7 +517,7 @@ class NetworkPreTrainer(object):
             # gt targets are the patient ID... kNN trained on latent proj of view 1 should predict the same for view 2
             target = torch.Tensor(list(range(out1.shape[0]))).to(out1.device).long()
             knn = WeightedKNNClassifier(
-                k=20
+                k=5
             )  # may want to play around with number of neighbours...
             knn(
                 train_features=out1,
@@ -666,6 +666,36 @@ class NetworkPreTrainer(object):
                         self.network.parameters(), self.clip_grad
                     )
                 self.optimizer.step()
+
+        # def plot_grad_flow(named_parameters):
+        #     '''Plots the gradients flowing through different layers in the net during training.
+        #     Can be used for checking for possible gradient vanishing / exploding problems.
+            
+        #     Usage: Plug this function in Trainer class after loss.backwards() as 
+        #     "plot_grad_flow(self.model.named_parameters())" to visualize the gradient flow'''
+        #     ave_grads = []
+        #     max_grads= []
+        #     layers = []
+        #     for n, p in named_parameters:
+        #         if(p.requires_grad) and ("bias" not in n) and p.grad is not None:
+        #             layers.append(n)
+        #             ave_grads.append(p.grad.abs().mean().cpu())
+        #             max_grads.append(p.grad.abs().max().cpu())
+        #     plt.bar(np.arange(len(max_grads)), max_grads, alpha=0.1, lw=1, color="c")
+        #     plt.bar(np.arange(len(max_grads)), ave_grads, alpha=0.1, lw=1, color="b")
+        #     plt.hlines(0, 0, len(ave_grads)+1, lw=2, color="k" )
+        #     plt.xticks(range(0,len(ave_grads), 1), layers, rotation="vertical")
+        #     plt.xlim(left=0, right=len(ave_grads))
+        #     plt.ylim(bottom = -0.001, top=0.02) # zoom in on the lower gradient regions
+        #     plt.xlabel("Layers")
+        #     plt.ylabel("average gradient")
+        #     plt.title("Gradient flow")
+        #     plt.grid(True)
+        #     plt.savefig(os.path.join('/home/lchalcroft/hypunet/debug-grad.png'))
+        #     plt.close()
+
+        # plot_grad_flow(self.hypernetwork.hyper.named_parameters())
+        # print(abc)
 
         # self.run_online_knn(output1.cpu().float(), output2.cpu().float())
         self.run_online_knn(output1, output2)

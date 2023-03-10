@@ -15,6 +15,7 @@
 
 from _warnings import warn
 from typing import Tuple
+from copy import deepcopy
 import sys
 
 import matplotlib
@@ -486,6 +487,16 @@ class GradCachePreTrainer(object):
                         meta = data_dict["meta"]
                     data1 = maybe_to_torch(data1)
                     data2 = maybe_to_torch(data2)
+
+                    # data2 = deepcopy(data1)
+                    # plt.figure()
+                    # plt.subplot(121)
+                    # plt.imshow(data1[0,0,...].cpu().numpy())
+                    # plt.subplot(122)
+                    # plt.imshow(data2[0,0,...].cpu().numpy())
+                    # plt.savefig('/home/lchalcroft/hypunet/test-augs.png')
+                    # plt.close()
+
                     if self.hyper_depth is not None:
                         meta = maybe_to_torch(meta)
                     if torch.cuda.is_available():
@@ -666,7 +677,7 @@ class GradCachePreTrainer(object):
             # gt targets are the patient ID... kNN trained on latent proj of view 1 should predict the same for view 2
             target = torch.Tensor(list(range(out1.shape[0]))).to(out1.device).long()
             knn = WeightedKNNClassifier(
-                k=20
+                k=5
             )  # may want to play around with number of neighbours...
             knn(
                 train_features=out1,

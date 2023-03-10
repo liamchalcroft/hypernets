@@ -70,7 +70,7 @@ class VICRegTrainer(ContrastivePreTrainer):
         self.process_plans(self.plans)
         self.detcon = detcon
 
-        self.initial_lr = 1e-4
+        # self.initial_lr = 1e-4
 
         self.projector = torch.nn.Sequential(
             torch.nn.Linear(320 if self.threeD else 480, proj_hidden_dim),
@@ -183,6 +183,7 @@ class GC_VICRegTrainer(GC_ContrastivePreTrainer):
         self.process_plans(self.plans)
         self.metabatch = int(metabatch)
         self.num_batches_per_epoch *= self.metabatch
+        # self.initial_lr *= self.metabatch**0.5
         self.detcon = detcon
 
         self.projector = torch.nn.Sequential(
@@ -201,9 +202,9 @@ class GC_VICRegTrainer(GC_ContrastivePreTrainer):
         if torch.cuda.is_available():
             self.projector.cuda()
 
-        self.sim_loss_weight = sim_loss_weight
-        self.var_loss_weight = var_loss_weight
-        self.cov_loss_weight = cov_loss_weight
+        self.sim_loss_weight = float(sim_loss_weight)
+        self.var_loss_weight = float(var_loss_weight)
+        self.cov_loss_weight = float(cov_loss_weight)
 
     def initialize_optimizer_and_scheduler(self):
         assert self.network is not None, "self.initialize_network must be called first"
