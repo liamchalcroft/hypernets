@@ -522,12 +522,12 @@ class GradCachePreTrainer(object):
                     if self.fp16:
                         with autocast():
                             outc1, outf1 = (
-                                self.call_model(self.network, data1, meta)
+                                self.call_model(self.hypernetwork, data1, meta)
                                 if self.hyper_depth is not None
                                 else self.call_model(self.network, data1)
                             )
                             outc2, outf2 = (
-                                self.call_model(self.network, data2, meta)
+                                self.call_model(self.hypernetwork, data2, meta)
                                 if self.hyper_depth is not None
                                 else self.call_model(self.network, data2)
                             )
@@ -557,12 +557,12 @@ class GradCachePreTrainer(object):
                                 self.amp_grad_scaler.update()
                     else:
                         outc1, outf1 = (
-                            self.call_model(self.network, data1, meta)
+                            self.call_model(self.hypernetwork, data1, meta)
                             if self.hyper_depth is not None
                             else self.call_model(self.network, data1)
                         )
                         outc2, outf2 = (
-                            self.call_model(self.network, data2, meta)
+                            self.call_model(self.hypernetwork, data2, meta)
                             if self.hyper_depth is not None
                             else self.call_model(self.network, data2)
                         )
