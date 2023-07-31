@@ -564,37 +564,39 @@ class NetworkPreTrainer(object):
                 + (1 - self.train_loss_MA_alpha) * self.all_tr_losses[-1]
             )
 
+    def make_hypernet(self):
+        print(15 * "*")
+        if str(self.hyper_depth) == "all":
+            print(
+                "Using hypernetwork to generate entire U-Net, with architecture:\n"
+            )
+            layers = None
+        else:
+            print(
+                "Using hypernetwork to generate first {} encoder blocks, with architecture:\n".format(
+                    self.hyper_depth
+                )
+            )
+            layers = ["conv_blocks_context." + str(self.hyper_depth)]
+        self.hypernetwork = HyperNet(self.meta_dim, self.network, layers)
+        if torch.cuda.is_available():
+            self.hypernetwork.cuda()
+        self.optimizer.param_groups[0][
+            "params"
+        ] += self.hypernetwork.hyper.parameters()
+        print(self.hypernetwork.hyper)
+        print(15 * "*")
+        try:
+            self.hypernetwork = torch.compile(self.hypernetwork)
+        except:
+            print(
+                "Tried to compile Torch model. Please update to Torch 2.0 for faster model throughput."
+            )
+
     def run_iteration(
         self, data_generator, do_backprop=True, run_online_evaluation=False
     ):
-        if self.hypernetwork is None and self.hyper_depth is not None:
-            print(15 * "*")
-            if str(self.hyper_depth) == "all":
-                print(
-                    "Using hypernetwork to generate entire U-Net, with architecture:\n"
-                )
-                layers = None
-            else:
-                print(
-                    "Using hypernetwork to generate first {} encoder blocks, with architecture:\n".format(
-                        self.hyper_depth
-                    )
-                )
-                layers = ["conv_blocks_context." + str(self.hyper_depth)]
-            self.hypernetwork = HyperNet(self.meta_dim, self.network, layers)
-            if torch.cuda.is_available():
-                self.hypernetwork.cuda()
-            self.optimizer.param_groups[0][
-                "params"
-            ] += self.hypernetwork.hyper.parameters()
-            print(self.hypernetwork.hyper)
-            print(15 * "*")
-            # try:
-            #     self.hypernetwork = torch.compile(self.hypernetwork)
-            # except:
-            #     print(
-            #         "Tried to compile Torch model. Please update to Torch 2.0 for faster model throughput."
-            #     )
+        
         data_dict = next(data_generator)
         data1 = data_dict["data1"]
         data2 = data_dict["data2"]
