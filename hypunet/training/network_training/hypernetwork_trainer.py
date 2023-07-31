@@ -431,7 +431,10 @@ class HyperNetworkTrainer(object):
                 if "amp_grad_scaler" in checkpoint.keys():
                     self.amp_grad_scaler.load_state_dict(checkpoint["amp_grad_scaler"])
 
-        self.network.load_state_dict(new_state_dict)
+        if self.hyper_depth is not None:
+            self.hypernetwork.load_state_dict(new_state_dict)
+        else:
+            self.network.load_state_dict(new_state_dict)
         self.epoch = checkpoint["epoch"]
         if train:
             optimizer_state_dict = checkpoint["optimizer_state_dict"]
@@ -741,37 +744,39 @@ class HyperNetworkTrainer(object):
                 + (1 - self.train_loss_MA_alpha) * self.all_tr_losses[-1]
             )
 
-    def run_iteration(
-        self, data_generator, do_backprop=True, run_online_evaluation=False
-    ):
-        if self.hypernetwork is None and self.hyper_depth is not None:
-            print(15 * "*")
-            if str(self.hyper_depth) == "all":
-                print(
-                    "Using hypernetwork to generate entire U-Net, with architecture:\n"
+    def make_hypernet(self):
+        print(15 * "*")
+        if str(self.hyper_depth) == "all":
+            print(
+                "Using hypernetwork to generate entire U-Net, with architecture:\n"
+            )
+            layers = None
+        else:
+            print(
+                "Using hypernetwork to generate first {} encoder blocks, with architecture:\n".format(
+                    self.hyper_depth
                 )
-                layers = None
-            else:
-                print(
-                    "Using hypernetwork to generate first {} encoder blocks, with architecture:\n".format(
-                        self.hyper_depth
-                    )
-                )
-                layers = ["conv_blocks_context." + str(self.hyper_depth)]
-            self.hypernetwork = HyperNet(self.meta_dim, self.network, layers)
-            if torch.cuda.is_available():
-                self.hypernetwork.cuda()
-            self.optimizer.param_groups[0][
-                "params"
-            ] += self.hypernetwork.hyper.parameters()
-            print(self.hypernetwork.hyper)
-            print(15 * "*")
-            # try:
+            )
+            layers = ["conv_blocks_context." + str(self.hyper_depth)]
+        self.hypernetwork = HyperNet(self.meta_dim, self.network, layers)
+        if torch.cuda.is_available():
+            self.hypernetwork.cuda()
+        self.optimizer.param_groups[0][
+            "params"
+        ] += self.hypernetwork.hyper.parameters()
+        print(self.hypernetwork.hyper)
+        print(15 * "*")
+        # try:
             #     self.hypernetwork = torch.compile(self.hypernetwork)
             # except:
             #     print(
             #         "Tried to compile Torch model. Please update to Torch 2.0 for faster model throughput."
             #     )
+
+    def run_iteration(
+        self, data_generator, do_backprop=True, run_online_evaluation=False
+    ):
+            
         data_dict = next(data_generator)
         data = data_dict["data"]
         target = data_dict["target"]

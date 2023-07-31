@@ -347,6 +347,8 @@ def main():
         )
 
     trainer.initialize(not validation_only)
+    if args.hyper_depth is not None:
+        trainer.make_hypernet()
 
     if find_lr:
         trainer.find_lr()
