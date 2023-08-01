@@ -18,14 +18,36 @@ The library may be installed with the command:
 
 ## Pre-training
 
-
-
 ### VICReg
 
+#### Baseline
+`hypunet_train 3d_fullres VICRegTrainer 002 all -n baseline-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
+#### Hypernet
+`hypunet_train 3d_fullres VICRegTrainer 002 all -n hyper-0-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --meta 4 --hyper 0 --kwargs sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
 ### GradCache
 
+#### Baseline
+`hypunet_train 3d_fullres GC_VICRegTrainer 002 all -n baseline-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
+#### Hypernet
+`hypunet_train 3d_fullres GC_VICRegTrainer 002 all -n hyper-0-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --meta 4 --hyper 0 --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
-### Denoising Decoder Pretraining
+## Training
+
+### Standard
+
+#### Baseline
+`hypunet_train 3d_fullres HyperTrainerV2 001 0 -n baseline`
+
+#### Hypernet
+`hypunet_train 3d_fullres HyperTrainerV2 001 0 -n hyper-0 --meta 4 --hyper 0`
+
+### Pre-trained
+
+#### Baseline
+`hypunet_train 3d_fullres HyperTrainerV2 001 0 -n baseline-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN -pretrained_weights ~/hypunet/hypunet_trained_models/hypunet/3d_fullres/Task002_CLINICALPLORAS/GC_VICRegTrainer__hypunetPlans_pretrained_PLORASPRETRAIN/baseline-s25-c25-v0.25/model_final_checkpoint.model`
+
+#### Hypernet
+`hypunet_train 3d_fullres HyperTrainerV2 001 0 -n hyper-0-s25-c25-v0.25 --meta 4 --hyper 0 -p hypunetPlans_pretrained_PLORASPRETRAIN -pretrained_weights ~/hypunet/hypunet_trained_models/hypunet/3d_fullres/Task002_CLINICALPLORAS/GC_VICRegTrainer__hypunetPlans_pretrained_PLORASPRETRAIN/hyper-0-s25-c25-v0.25/model_final_checkpoint.model`
