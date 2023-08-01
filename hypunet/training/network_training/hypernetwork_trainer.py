@@ -765,13 +765,14 @@ class HyperNetworkTrainer(object):
             "params"
         ] += self.hypernetwork.hyper.parameters()
         print(self.hypernetwork.hyper)
-        print(15 * "*")
         try:
             self.hypernetwork = torch.compile(self.hypernetwork)
+            print('Succesfully compiled Torch model.')
         except:
             print(
                 "Tried to compile Torch model. Please update to Torch 2.0 for faster model throughput."
             )
+        print(15 * "*")
 
     def run_iteration(
         self, data_generator, do_backprop=True, run_online_evaluation=False

@@ -653,7 +653,12 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
         batch_size=None,
     ):
 
-        super().__init__(deterministic, fp16, hyper_depth, meta_dim)
+        super().__init__(
+            deterministic=deterministic,
+            fp16=fp16,
+            hyper_depth=hyper_depth,
+            meta_dim=meta_dim,
+        )
 
         self.max_num_epochs = 500
         # self.initial_lr = 1e-2
