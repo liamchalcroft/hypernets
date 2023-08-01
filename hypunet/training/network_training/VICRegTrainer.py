@@ -223,10 +223,7 @@ class GC_VICRegTrainer(GC_ContrastivePreTrainer):
             view1 = view1.view(view1.size(0), view1.size(1), -1).mean(dim=2)
             view2 = view2.view(view2.size(0), view2.size(1), -1).mean(dim=2)
 
-        print(view1.shape)
-        print(self.projector)
         z1 = self.projector(view1)
-        print(z1.shape)
         z2 = self.projector(view2)
 
         if (
