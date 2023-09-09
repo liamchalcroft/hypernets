@@ -21,18 +21,18 @@ The library may be installed with the command:
 ### VICReg
 
 #### Baseline
-`hypunet_train 3d_fullres VICRegTrainer 002 all -n baseline-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
+`hypunet_train 3d_fullres VICRegTrainer 002 all -n baseline-s25-v25-c0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --kwargs sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
 #### Hypernet
-`hypunet_train 3d_fullres VICRegTrainer 002 all -n hyper-0-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --meta 4 --hyper 0 --kwargs sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
+`hypunet_train 3d_fullres VICRegTrainer 002 all -n hyper-0-s25-v25-c0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --meta 4 --hyper 0 --kwargs sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
 ### GradCache
 
 #### Baseline
-`hypunet_train 3d_fullres GC_VICRegTrainer 002 all -n baseline-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
+`hypunet_train 3d_fullres GC_VICRegTrainer 002 all -n baseline-s25-v25-c0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
 #### Hypernet
-`hypunet_train 3d_fullres GC_VICRegTrainer 002 all -n hyper-0-s25-c25-v0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --meta 4 --hyper 0 --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
+`hypunet_train 3d_fullres GC_VICRegTrainer 002 all -n hyper-0-s25-v25-c0.25 -p hypunetPlans_pretrained_PLORASPRETRAIN --meta 4 --hyper 0 --kwargs metabatch=16 sim_loss_weight=25 var_loss_weight=25 cov_loss_weight=0.25`
 
 ## Training
 
