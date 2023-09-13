@@ -421,8 +421,10 @@ class HyperNetworkTrainer(object):
         # match. Use heuristic to make it match
         for k, value in checkpoint["state_dict"].items():
             key = k
+            if key not in curr_state_dict_keys and key.startswith("_orig_mod."):
+                key = key.partition("_orig_mod.")[2]
             if key not in curr_state_dict_keys and key.startswith("module."):
-                key = key[7:]
+                key = key.partition("module.")[2]
             new_state_dict[key] = value
 
         if self.fp16:
