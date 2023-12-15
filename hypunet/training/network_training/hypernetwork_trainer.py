@@ -809,12 +809,12 @@ class HyperNetworkTrainer(object):
                     del data
                 l = self.loss(output, target)
 
-            if do_backprop:
-                self.amp_grad_scaler.scale(l).backward()
-                self.amp_grad_scaler.unscale_(self.optimizer)
-                torch.nn.utils.clip_grad_norm_(self.network.parameters(), 12)
-                self.amp_grad_scaler.step(self.optimizer)
-                self.amp_grad_scaler.update()
+                if do_backprop:
+                    self.amp_grad_scaler.scale(l).backward()
+                    self.amp_grad_scaler.unscale_(self.optimizer)
+                    torch.nn.utils.clip_grad_norm_(self.network.parameters(), 12)
+                    self.amp_grad_scaler.step(self.optimizer)
+                    self.amp_grad_scaler.update()
         else:
             if self.hyper_depth is not None:
                 output = self.hypernetwork(data, meta)
