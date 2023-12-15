@@ -29,14 +29,15 @@ def load_pretrained_weights(network, fname, verbose=False):
     # match. Use heuristic to make it match
     for k, value in pretrained_dict.items():
         key = k
-        # print()
-        # print(key)
-        # if "_orig_mod." in key:
-        #     key = key.replace("_orig_mod.","")
-        # print(key)
-        # remove module. prefix from DDP models
-        if key.startswith("module."):
-            key = key.replace("module.","")
+        print()
+        print(key)
+        if not key in list(network.state_dict().keys()):
+            if "_orig_mod." in key:
+                key = key.replace("_orig_mod.","")
+            # remove module. prefix from DDP models
+            if key.startswith("module."):
+                key = key.replace("module.","")
+        print(key)
         new_state_dict[key] = value
 
     pretrained_dict = new_state_dict
