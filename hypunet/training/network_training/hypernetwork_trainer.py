@@ -803,10 +803,8 @@ class HyperNetworkTrainer(object):
             with autocast():
                 if self.hyper_depth is not None:
                     output = self.hypernetwork(data, meta)
-                    del data, meta
                 else:
                     output = self.network(data)
-                    del data
                 l = self.loss(output, target)
 
                 if do_backprop:
@@ -818,10 +816,8 @@ class HyperNetworkTrainer(object):
         else:
             if self.hyper_depth is not None:
                 output = self.hypernetwork(data, meta)
-                del data, meta
             else:
                 output = self.network(data)
-                del data
             l = self.loss(output, target)
 
             if do_backprop:
