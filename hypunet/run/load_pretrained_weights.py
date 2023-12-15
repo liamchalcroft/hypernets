@@ -31,8 +31,8 @@ def load_pretrained_weights(network, fname, verbose=False):
         key = k
         # print()
         # print(key)
-        if "_orig_mod." in key:
-            key = key.replace("_orig_mod.","")
+        # if "_orig_mod." in key:
+        #     key = key.replace("_orig_mod.","")
         # print(key)
         # remove module. prefix from DDP models
         if key.startswith("module."):
