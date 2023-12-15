@@ -20,8 +20,8 @@ def load_pretrained_weights(network, fname, verbose=False):
     """
     saved_model = torch.load(fname)
     pretrained_dict = saved_model["state_dict"]
-    print(network)
-    print(list(pretrained_dict.keys()))
+    # print(network)
+    # print(list(pretrained_dict.keys()))
 
     new_state_dict = {}
 
@@ -29,11 +29,11 @@ def load_pretrained_weights(network, fname, verbose=False):
     # match. Use heuristic to make it match
     for k, value in pretrained_dict.items():
         key = k
-        print()
-        print(key)
+        # print()
+        # print(key)
         if "_orig_mod." in key:
             key = key.replace("_orig_mod.","")
-        print(key)
+        # print(key)
         # remove module. prefix from DDP models
         if key.startswith("module."):
             key = key.replace("module.","")
