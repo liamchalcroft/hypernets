@@ -164,6 +164,7 @@ class HyperTrainerV2(HyperTrainer):
 
             self.initialize_network()
             self.initialize_optimizer_and_scheduler()
+            print(type(self.network))
 
             assert isinstance(self.network, (SegmentationNetwork, nn.DataParallel))
         else:
