@@ -808,7 +808,7 @@ class HyperNetworkTrainer(object):
                 l = self.loss(output, target)
 
                 if do_backprop:
-                    self.amp_grad_scaler.scale(l).backward()
+                    self.amp_grad_scaler.scale(l).backward(retain_graph=True)
                     self.amp_grad_scaler.unscale_(self.optimizer)
                     torch.nn.utils.clip_grad_norm_(self.network.parameters(), 12)
                     self.amp_grad_scaler.step(self.optimizer)
@@ -821,7 +821,7 @@ class HyperNetworkTrainer(object):
             l = self.loss(output, target)
 
             if do_backprop:
-                l.backward()
+                l.backward(retain_graph=True)
                 torch.nn.utils.clip_grad_norm_(self.network.parameters(), 12)
                 self.optimizer.step()
 
