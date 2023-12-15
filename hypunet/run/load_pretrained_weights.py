@@ -47,6 +47,10 @@ def load_pretrained_weights(network, fname, verbose=False):
             ):
                 continue
             else:
+                print()
+                print(key)
+                print(model_dict[key].shape)
+                print(pretrained_dict[key].shape)
                 ok = False
                 break
 
