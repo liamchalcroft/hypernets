@@ -20,6 +20,8 @@ def load_pretrained_weights(network, fname, verbose=False):
     """
     saved_model = torch.load(fname)
     pretrained_dict = saved_model["state_dict"]
+    print(network)
+    print(list(pretrained_dict.keys()))
 
     new_state_dict = {}
 
