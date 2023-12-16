@@ -79,7 +79,7 @@ class ContrastivePreTrainer(NetworkPreTrainer):
             meta_dim=meta_dim,
         )
 
-        self.max_num_epochs = 500
+        self.max_num_epochs = 1000
         # self.initial_lr = 1e-2
 
         self.pin_memory = True
@@ -661,7 +661,7 @@ class GC_ContrastivePreTrainer(GradCachePreTrainer):
             meta_dim=meta_dim,
         )
 
-        self.max_num_epochs = 500
+        self.max_num_epochs = 1000
         # self.initial_lr = 1e-2
 
         self.pin_memory = True
