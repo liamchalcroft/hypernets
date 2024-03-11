@@ -11,6 +11,7 @@ The library may be installed with the command:
 ## Command set-up
 
 ```
+export PATH=$PATH:~/.local/bin/
 export hypunet_raw_data_base="~/hypunet/hypunet_raw_data_base"
 export hypunet_preprocessed="~/hypunet/hypunet_preprocessed"
 export RESULTS_FOLDER="~/hypunet/hypunet_trained_models"
