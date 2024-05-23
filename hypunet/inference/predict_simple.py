@@ -61,14 +61,6 @@ def main():
         required=False,
         default=default_trainer,
     )
-    parser.add_argument(
-        "-ctr",
-        "--cascade_trainer_class_name",
-        help="Trainer class name used for predicting the 3D full resolution U-Net part of the cascade."
-        "Default is %s" % default_cascade_trainer,
-        required=False,
-        default=default_cascade_trainer,
-    )
 
     parser.add_argument(
         "-m",
