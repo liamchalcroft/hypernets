@@ -160,6 +160,7 @@ def predict_cases(
     )
 
     print("starting prediction...")
+    results = []
     for preprocessed in preprocessing:
         output_filename, (d, m, dct) = preprocessed
         
@@ -191,6 +192,7 @@ def predict_cases(
         print("predicting", output_filename)
 
         for i, p in enumerate(params):
+            print(f"Loading checkpoint {i+1}/{len(params)}")
             trainer.load_checkpoint_ram(p, False)
             res = trainer.predict_preprocessed_data_return_seg_and_softmax(
                 d,
@@ -235,7 +237,7 @@ def predict_cases(
                 save_segmentation_nifti, ((seg, output_filename, dct, 0, None),)
             )
         )
-        print("done")
+        print("done with", output_filename)
 
     print("inference done. Now waiting for the segmentation export to finish...")
     _ = [i.get() for i in results]
