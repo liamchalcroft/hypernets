@@ -775,38 +775,17 @@ def check_input_folder_and_return_caseIDs(input_folder, expected_num_modalities)
     remaining = deepcopy(files)
     missing = []
 
-    assert (
-        len(files) > 0
-    ), "input folder did not contain any images (expected to find .nii.gz file endings)"
-
-    # now check if all required files are present and that no unexpected files are remaining
-    for c in maybe_case_ids:
-        for n in range(expected_num_modalities):
-            expected_output_file = c + "_%04.0d.nii.gz" % n
-            if not isfile(join(input_folder, expected_output_file)):
-                missing.append(expected_output_file)
+    for case_id in maybe_case_ids:
+        expected_files = [f"{case_id}_{i:04d}.nii.gz" for i in range(expected_num_modalities)]
+        for ef in expected_files:
+            if ef not in remaining:
+                missing.append(ef)
             else:
-                remaining.remove(expected_output_file)
+                remaining.remove(ef)
 
-    print(
-        "Found %d unique case ids, here are some examples:" % len(maybe_case_ids),
-        np.random.choice(maybe_case_ids, min(len(maybe_case_ids), 10)),
-    )
-    print(
-        "If they don't look right, make sure to double check your filenames. They must end with _0000.nii.gz etc"
-    )
-
-    if len(remaining) > 0:
-        print(
-            "found %d unexpected remaining files in the folder. Here are some examples:"
-            % len(remaining),
-            np.random.choice(remaining, min(len(remaining), 10)),
-        )
-
-    if len(missing) > 0:
-        print("Some files are missing:")
-        print(missing)
-        raise RuntimeError("missing files in input_folder")
+    if missing:
+        print(f"Missing files: {missing}")
+        raise ValueError(f"Not all expected files are present for case IDs: {maybe_case_ids}")
 
     return maybe_case_ids
 
