@@ -164,10 +164,16 @@ def predict_cases(
         output_filename, (d, m, dct) = preprocessed
         
         # Check if metadata and image are loaded correctly
-        if d is None or dct is None:
-            print(f"Error: Failed to load data or metadata for {output_filename}")
+        if d is None:
+            print(f"Error: Failed to load data for {output_filename}")
             continue
-        
+
+        if m is None:
+            print(f"Error: Failed to load metadata for {output_filename}")
+            continue
+
+        print(f"Loaded data shape: {d.shape}, metadata: {m.shape}")
+
         if isinstance(d, str):
             data = np.load(d)
             os.remove(d)
