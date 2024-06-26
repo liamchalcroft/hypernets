@@ -407,20 +407,35 @@ class GenericPreprocessor(object):
         force_separate_z=None,
         meta=None,
     ):
-        data, seg, properties = ImageCropper.crop_from_list_of_files(
-            data_files, seg_file
-        )
+        try:
+            # Load data and segmentation
+            data, seg, properties = ImageCropper.crop_from_list_of_files(
+                data_files, seg_file
+            )
+            print(f"Loaded data shape: {data.shape}, seg shape: {seg.shape}, properties: {properties}")
 
-        data = data.transpose((0, *[i + 1 for i in self.transpose_forward]))
-        seg = seg.transpose((0, *[i + 1 for i in self.transpose_forward]))
+            # Transpose data and segmentation
+            data = data.transpose((0, *[i + 1 for i in self.transpose_forward]))
+            seg = seg.transpose((0, *[i + 1 for i in self.transpose_forward]))
+            print(f"Transposed data shape: {data.shape}, transposed seg shape: {seg.shape}")
 
-        data, seg, properties = self.resample_and_normalize(
-            data, target_spacing, properties, seg, force_separate_z=force_separate_z
-        )
-        if meta is not None:
-            return data.astype(np.float32), meta, seg, properties
-        else:
-            return data.astype(np.float32), seg, properties
+            # Resample and normalize data and segmentation
+            data, seg, properties = self.resample_and_normalize(
+                data, target_spacing, properties, seg, force_separate_z=force_separate_z
+            )
+            print(f"Resampled data shape: {data.shape}, resampled seg shape: {seg.shape}, properties: {properties}")
+
+            # Check if metadata is provided and return accordingly
+            if meta is not None:
+                print(f"Returning data with metadata: {meta}")
+                return data.astype(np.float32), meta, seg, properties
+            else:
+                print("Returning data without metadata")
+                return data.astype(np.float32), seg, properties
+
+        except Exception as e:
+            print(f"Exception occurred during preprocessing: {e}")
+            raise
 
     def _run_internal(
         self,
