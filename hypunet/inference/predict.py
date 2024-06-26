@@ -164,7 +164,7 @@ def predict_cases(
     pool = Pool(num_threads_nifti_save)  # Add this line to define the pool
     for preprocessed in preprocessing:
         output_filename, (d, m, dct) = preprocessed
-        print(output_filename)
+        print(f"\n\nOUTPUT FILENAME: {output_filename}")
         
         # Check if metadata and image are loaded correctly
         if d is None:
