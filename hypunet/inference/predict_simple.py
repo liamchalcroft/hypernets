@@ -201,12 +201,6 @@ def main():
         "the required vram. If you want to disable mixed precision you can set this flag. Note "
         "that this is not recommended (mixed precision is ~2x faster!)",
     )
-    parser.add_argument(
-        "--cascade_trainer_class_name",
-        type=str,
-        required=False,
-        help="Name of the cascade trainer class",
-    )
 
     args = parser.parse_args()
     input_folder = args.input_folder
@@ -225,8 +219,6 @@ def main():
     all_in_gpu = args.all_in_gpu
     model = args.model
     trainer_class_name = args.trainer_class_name
-    cascade_trainer_class_name = args.cascade_trainer_class_name
-
     task_name = args.task_name
 
     if not task_name.startswith("Task"):
