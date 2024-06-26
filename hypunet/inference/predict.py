@@ -278,6 +278,7 @@ def predict_cases(
         trainer.load_checkpoint_ram(params[0], False)
         softmax = trainer.predict_preprocessed_data_return_seg_and_softmax(
             d,
+            dct,  # Pass the 'meta' argument here
             do_mirroring=do_tta,
             mirror_axes=trainer.data_aug_params["mirror_axes"],
             use_sliding_window=True,
@@ -291,6 +292,7 @@ def predict_cases(
             trainer.load_checkpoint_ram(p, False)
             softmax += trainer.predict_preprocessed_data_return_seg_and_softmax(
                 d,
+                dct,  # Pass the 'meta' argument here
                 do_mirroring=do_tta,
                 mirror_axes=trainer.data_aug_params["mirror_axes"],
                 use_sliding_window=True,
@@ -503,6 +505,7 @@ def predict_cases_fast(
 
             res = trainer.predict_preprocessed_data_return_seg_and_softmax(
                 d,
+                dct,  # Pass the 'meta' argument here
                 do_mirroring=do_tta,
                 mirror_axes=trainer.data_aug_params["mirror_axes"],
                 use_sliding_window=True,
@@ -685,6 +688,7 @@ def predict_cases_fastest(
             trainer.load_checkpoint_ram(p, False)
             res = trainer.predict_preprocessed_data_return_seg_and_softmax(
                 d,
+                dct,  # Pass the 'meta' argument here
                 do_mirroring=do_tta,
                 mirror_axes=trainer.data_aug_params["mirror_axes"],
                 use_sliding_window=True,
