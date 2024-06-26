@@ -250,10 +250,7 @@ def main():
     elif all_in_gpu == "False":
         all_in_gpu = False
 
-    if model == "3d_cascade_fullres":
-        trainer = cascade_trainer_class_name
-    else:
-        trainer = trainer_class_name
+    trainer = trainer_class_name
 
     model_folder_name = join(
         network_training_output_dir,
