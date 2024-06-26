@@ -176,20 +176,14 @@ def predict_cases(
         print(f"Loaded data shape: {d.shape}, metadata: {m.shape}")
 
         if isinstance(d, str):
-            data = np.load(d)
-            os.remove(d)
-            d = data
-
-        if isinstance(m, str):
-            meta = np.load(m)
-            # os.remove(m)
-            m = meta
-
+            print(f"Loading data from temporary file {d}")
+            d = np.load(d)
+        
         all_softmax_outputs = np.zeros(
             (len(params), trainer.num_classes, *d.shape[1:]), dtype=np.float16
         )
         all_seg_outputs = np.zeros((len(params), *d.shape[1:]), dtype=int)
-        print("predicting", output_filename)
+        print(f"predicting {output_filename}")
 
         for i, p in enumerate(params):
             print(f"Loading checkpoint {i+1}/{len(params)}")
@@ -205,20 +199,9 @@ def predict_cases(
                 all_in_gpu=all_in_gpu,
                 mixed_precision=mixed_precision,
             )
-            if len(params) > 1:
-                all_softmax_outputs[i] = res[1]
+            all_softmax_outputs[i] = res[1]
             all_seg_outputs[i] = res[0]
 
-        if hasattr(trainer, "regions_class_order"):
-            region_class_order = trainer.regions_class_order
-        else:
-            region_class_order = None
-        assert region_class_order is None, (
-            "predict_cases_fastest can only work with regular softmax predictions "
-            "and is therefore unable to handle trainer classes with region_class_order"
-        )
-
-        print("aggregating predictions")
         if len(params) > 1:
             softmax_mean = np.mean(all_softmax_outputs, 0)
             seg = softmax_mean.argmax(0)
@@ -237,7 +220,7 @@ def predict_cases(
                 save_segmentation_nifti, ((seg, output_filename, dct, 0, None),)
             )
         )
-        print("done with", output_filename)
+        print(f"done with {output_filename}")
 
     print("inference done. Now waiting for the segmentation export to finish...")
     _ = [i.get() for i in results]
@@ -270,6 +253,7 @@ def predict_cases(
 
     pool.close()
     pool.join()
+    print("Prediction process completed.")
 
 def check_input_folder_and_return_caseIDs(input_folder, expected_num_modalities):
     print("This model expects %d input modalities for each image" % expected_num_modalities)
