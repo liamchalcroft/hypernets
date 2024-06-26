@@ -413,29 +413,30 @@ class GenericPreprocessor(object):
             data, seg, properties = ImageCropper.crop_from_list_of_files(
                 data_files, seg_file
             )
-            print(f"Loaded data shape: {data.shape}, seg shape: {seg.shape}, properties: {properties}")
+            print(f"\nLoaded data shape: {data.shape}, seg shape: {seg.shape}, properties: {properties}")
 
             # Transpose data and segmentation
             data = data.transpose((0, *[i + 1 for i in self.transpose_forward]))
             seg = seg.transpose((0, *[i + 1 for i in self.transpose_forward]))
-            print(f"Transposed data shape: {data.shape}, transposed seg shape: {seg.shape}")
+            print(f"\nTransposed data shape: {data.shape}, transposed seg shape: {seg.shape}")
 
             # Resample and normalize data and segmentation
             data, seg, properties = self.resample_and_normalize(
                 data, target_spacing, properties, seg, force_separate_z=force_separate_z
             )
-            print(f"Resampled data shape: {data.shape}, resampled seg shape: {seg.shape}, properties: {properties}")
+            print(f"\nResampled data shape: {data.shape}, resampled seg shape: {seg.shape}, properties: {properties}")
 
             # If meta exists, define here
             if meta is None and os.path.exists(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy')):
                 meta = np.load(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy'))
+                print(f"\nLoaded meta: {meta.shape}")
 
             # Check if metadata is provided and return accordingly
             if meta is not None:
-                print(f"Returning data with metadata: {meta}")
+                print(f"\nReturning data with metadata: {meta}")
                 return data.astype(np.float32), meta, seg, properties
             else:
-                print("Returning data without metadata")
+                print("\nReturning data without metadata")
                 return data.astype(np.float32), seg, properties
 
         except Exception as e:
