@@ -617,9 +617,14 @@ class HyperTrainer(HyperNetworkTrainer):
             self.intensity_properties,
         )
 
-        d, m, s, properties = preprocessor.preprocess_test_case(
+        result = preprocessor.preprocess_test_case(
             input_files, self.plans["plans_per_stage"][self.stage]["current_spacing"]
         )
+        if len(result) == 3:
+            d, m, s = result
+            properties = None  # Placeholder value
+        else:
+            d, m, s, properties = result
         return d, m, s, properties
 
     def preprocess_predict_nifti(
