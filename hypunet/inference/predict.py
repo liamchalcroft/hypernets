@@ -56,7 +56,7 @@ def preprocess_save_to_queue(
         if True:
             output_file = output_files[i]
             print("preprocessing", output_file)
-            d, _, dct = preprocess_fn(l)
+            d, m, s, dct = preprocess_fn(l)  # Adjusted unpacking
             # print(output_file, dct)
             if segs_from_prev_stage[i] is not None:
                 assert isfile(segs_from_prev_stage[i]) and segs_from_prev_stage[
