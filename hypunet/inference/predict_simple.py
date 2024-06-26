@@ -186,13 +186,6 @@ def main():
     parser.add_argument(
         "--step_size", type=float, default=0.5, required=False, help="don't touch"
     )
-    # parser.add_argument("--interp_order", required=False, default=3, type=int,
-    #                     help="order of interpolation for segmentations, has no effect if mode=fastest. Do not touch this.")
-    # parser.add_argument("--interp_order_z", required=False, default=0, type=int,
-    #                     help="order of interpolation along z is z is done differently. Do not touch this.")
-    # parser.add_argument("--force_separate_z", required=False, default="None", type=str,
-    #                     help="force_separate_z resampling. Can be None, True or False, has no effect if mode=fastest. "
-    #                          "Do not touch this.")
     parser.add_argument(
         "-chk",
         help="checkpoint name, default: model_final_checkpoint",
@@ -208,6 +201,12 @@ def main():
         "the required vram. If you want to disable mixed precision you can set this flag. Note "
         "that this is not recommended (mixed precision is ~2x faster!)",
     )
+    parser.add_argument(
+        "--cascade_trainer_class_name",
+        type=str,
+        required=False,
+        help="Name of the cascade trainer class",
+    )
 
     args = parser.parse_args()
     input_folder = args.input_folder
@@ -221,9 +220,6 @@ def main():
     num_threads_nifti_save = args.num_threads_nifti_save
     disable_tta = args.disable_tta
     step_size = args.step_size
-    # interp_order = args.interp_order
-    # interp_order_z = args.interp_order_z
-    # force_separate_z = args.force_separate_z
     overwrite_existing = args.overwrite_existing
     mode = args.mode
     all_in_gpu = args.all_in_gpu
@@ -240,15 +236,6 @@ def main():
     assert model in ["2d", "3d_lowres", "3d_fullres", "3d_cascade_fullres"], (
         "-m must be 2d, 3d_lowres, 3d_fullres or " "3d_cascade_fullres"
     )
-
-    # if force_separate_z == "None":
-    #     force_separate_z = None
-    # elif force_separate_z == "False":
-    #     force_separate_z = False
-    # elif force_separate_z == "True":
-    #     force_separate_z = True
-    # else:
-    #     raise ValueError("force_separate_z must be None, True or False. Given: %s" % force_separate_z)
 
     if lowres_segmentations == "None":
         lowres_segmentations = None
@@ -270,48 +257,6 @@ def main():
         all_in_gpu = True
     elif all_in_gpu == "False":
         all_in_gpu = False
-
-    # we need to catch the case where model is 3d cascade fullres and the low resolution folder has not been set.
-    # In that case we need to try and predict with 3d low res first
-    if model == "3d_cascade_fullres" and lowres_segmentations is None:
-        print("lowres_segmentations is None. Attempting to predict 3d_lowres first...")
-        assert part_id == 0 and num_parts == 1, (
-            "if you don't specify a --lowres_segmentations folder for the "
-            "inference of the cascade, custom values for part_id and num_parts "
-            "are not supported. If you wish to have multiple parts, please "
-            "run the 3d_lowres inference first (separately)"
-        )
-        model_folder_name = join(
-            network_training_output_dir,
-            "3d_lowres",
-            task_name,
-            trainer_class_name + "__" + args.plans_identifier,
-        )
-        assert isdir(model_folder_name), (
-            "model output folder not found. Expected: %s" % model_folder_name
-        )
-        lowres_output_folder = join(output_folder, "3d_lowres_predictions")
-        predict_from_folder(
-            model_folder_name,
-            input_folder,
-            lowres_output_folder,
-            folds,
-            False,
-            num_threads_preprocessing,
-            num_threads_nifti_save,
-            None,
-            part_id,
-            num_parts,
-            not disable_tta,
-            overwrite_existing=overwrite_existing,
-            mode=mode,
-            overwrite_all_in_gpu=all_in_gpu,
-            mixed_precision=not args.disable_mixed_precision,
-            step_size=step_size,
-        )
-        lowres_segmentations = lowres_output_folder
-        torch.cuda.empty_cache()
-        print("3d_lowres done")
 
     if model == "3d_cascade_fullres":
         trainer = cascade_trainer_class_name
