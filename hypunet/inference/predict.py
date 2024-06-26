@@ -35,6 +35,13 @@ def preprocess_save_to_queue(
         output_file = output_files[i]
         print("preprocessing", output_file)
         d, m, s, dct = preprocess_fn(l)
+        
+        # Check if metadata and image are loaded correctly
+        if d is None or dct is None:
+            print(f"Error: Failed to load data or metadata for {output_file}")
+            errors_in.append(output_file)
+            continue
+        
         if segs_from_prev_stage[i] is not None:
             assert isfile(segs_from_prev_stage[i]) and segs_from_prev_stage[i].endswith(".nii.gz"), (
                 "segs_from_prev_stage must point to a segmentation file"
@@ -142,6 +149,12 @@ def predict_cases(
     print("starting prediction...")
     for preprocessed in preprocessing:
         output_filename, (d, dct) = preprocessed
+        
+        # Check if metadata and image are loaded correctly
+        if d is None or dct is None:
+            print(f"Error: Failed to load data or metadata for {output_filename}")
+            continue
+        
         if isinstance(d, str):
             data = np.load(d)
             os.remove(d)
