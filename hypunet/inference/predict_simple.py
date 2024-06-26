@@ -264,7 +264,7 @@ def main():
         model,
         task_name,
         trainer + "__" + args.plans_identifier,
-        args.name,
+        args.folder_name,
     )
     print("using model stored in ", model_folder_name)
     assert isdir(model_folder_name), (
