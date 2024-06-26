@@ -296,8 +296,10 @@ def save_segmentation_nifti(
         seg_old_size[
             bbox[0][0] : bbox[0][1], bbox[1][0] : bbox[1][1], bbox[2][0] : bbox[2][1]
         ] = seg_old_spacing
+        print("Applied bounding box to segmentation")
     else:
         seg_old_size = seg_old_spacing
+        print("No bounding box applied")
 
     seg_resized_itk = sitk.GetImageFromArray(seg_old_size.astype(np.uint8))
     seg_resized_itk.SetSpacing(dct["itk_spacing"])

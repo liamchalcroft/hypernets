@@ -35,7 +35,6 @@ def preprocess_save_to_queue(
         output_file = output_files[i]
         print("preprocessing", output_file)
         try:
-            print(l)
             d, m, s, dct = preprocess_fn(l)
 
             # Check if image is loaded correctly
