@@ -34,33 +34,45 @@ def preprocess_save_to_queue(
     for i, l in enumerate(list_of_lists):
         output_file = output_files[i]
         print("preprocessing", output_file)
-        d, m, s, dct = preprocess_fn(l)
-        
-        # Check if metadata and image are loaded correctly
-        if d is None or dct is None:
-            print(f"Error: Failed to load data or metadata for {output_file}")
+        try:
+            d, m, s, dct = preprocess_fn(l)
+
+            # Check if image is loaded correctly
+            if d is None:
+                print(f"Error: Failed to load data for {output_file}")
+                errors_in.append(output_file)
+                continue
+
+            # Check if metadata is loaded correctly
+            if dct is None:
+                print(f"Error: Failed to load metadata for {output_file}")
+                errors_in.append(output_file)
+                continue
+            
+            print(f"Loaded data shape: {d.shape}, metadata: {dct}")
+
+            if segs_from_prev_stage[i] is not None:
+                assert isfile(segs_from_prev_stage[i]) and segs_from_prev_stage[i].endswith(".nii.gz"), (
+                    "segs_from_prev_stage must point to a segmentation file"
+                )
+                seg_prev = sitk.GetArrayFromImage(sitk.ReadImage(segs_from_prev_stage[i]))
+                img = sitk.GetArrayFromImage(sitk.ReadImage(l[0]))
+                assert all([i == j for i, j in zip(seg_prev.shape, img.shape)]), (
+                    "image and segmentation from previous stage don't have the same pixel array shape! "
+                    "image: %s, seg_prev: %s" % (l[0], segs_from_prev_stage[i])
+                )
+                seg_prev = seg_prev.transpose(transpose_forward)
+                seg_reshaped = resize_segmentation(seg_prev, d.shape[1:], order=1)
+                seg_reshaped = to_one_hot(seg_reshaped, classes)
+                d = np.vstack((d, seg_reshaped)).astype(np.float32)
+            if np.prod(d.shape) > (2e9 / 4 * 0.85):
+                print("This output is too large for python process-process communication. Saving output temporarily to disk")
+                np.save(output_file[:-7] + ".npy", d)
+                d = output_file[:-7] + ".npy"
+            q.put((output_file, (d, dct)))
+        except Exception as e:
+            print(f"Exception occurred while processing {output_file}: {e}")
             errors_in.append(output_file)
-            continue
-        
-        if segs_from_prev_stage[i] is not None:
-            assert isfile(segs_from_prev_stage[i]) and segs_from_prev_stage[i].endswith(".nii.gz"), (
-                "segs_from_prev_stage must point to a segmentation file"
-            )
-            seg_prev = sitk.GetArrayFromImage(sitk.ReadImage(segs_from_prev_stage[i]))
-            img = sitk.GetArrayFromImage(sitk.ReadImage(l[0]))
-            assert all([i == j for i, j in zip(seg_prev.shape, img.shape)]), (
-                "image and segmentation from previous stage don't have the same pixel array shape! "
-                "image: %s, seg_prev: %s" % (l[0], segs_from_prev_stage[i])
-            )
-            seg_prev = seg_prev.transpose(transpose_forward)
-            seg_reshaped = resize_segmentation(seg_prev, d.shape[1:], order=1)
-            seg_reshaped = to_one_hot(seg_reshaped, classes)
-            d = np.vstack((d, seg_reshaped)).astype(np.float32)
-        if np.prod(d.shape) > (2e9 / 4 * 0.85):
-            print("This output is too large for python process-process communication. Saving output temporarily to disk")
-            np.save(output_file[:-7] + ".npy", d)
-            d = output_file[:-7] + ".npy"
-        q.put((output_file, (d, dct)))
     q.put("end")
     if len(errors_in) > 0:
         print("There were some errors in the following cases:", errors_in)
