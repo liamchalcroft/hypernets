@@ -163,6 +163,7 @@ def predict_cases(
     results = []
     for preprocessed in preprocessing:
         output_filename, (d, m, dct) = preprocessed
+        print(output_filename)
         
         # Check if metadata and image are loaded correctly
         if d is None:
