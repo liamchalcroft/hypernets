@@ -26,6 +26,7 @@ from scipy.ndimage.interpolation import map_coordinates
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *
 from multiprocessing.pool import Pool
+import os
 
 
 def get_do_separate_z(
@@ -424,6 +425,10 @@ class GenericPreprocessor(object):
                 data, target_spacing, properties, seg, force_separate_z=force_separate_z
             )
             print(f"Resampled data shape: {data.shape}, resampled seg shape: {seg.shape}, properties: {properties}")
+
+            # If meta exists, define here
+            if meta is None and os.path.exists(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy')):
+                meta = np.load(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy'))
 
             # Check if metadata is provided and return accordingly
             if meta is not None:
