@@ -161,6 +161,7 @@ def predict_cases(
 
     print("starting prediction...")
     results = []
+    pool = Pool(num_threads_nifti_save)  # Add this line to define the pool
     for preprocessed in preprocessing:
         output_filename, (d, m, dct) = preprocessed
         print(output_filename)
