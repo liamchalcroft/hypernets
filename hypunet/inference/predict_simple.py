@@ -29,6 +29,13 @@ from hypunet.utilities.task_name_id_conversion import convert_id_to_task_name
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "-name",
+        "--folder_name",
+        help="Experiment name - allows for multiple sub-folders for a dataset.",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
         "-i",
         "--input_folder",
         help="Must contain all modalities for each patient in the correct"
@@ -257,6 +264,7 @@ def main():
         model,
         task_name,
         trainer + "__" + args.plans_identifier,
+        args.name,
     )
     print("using model stored in ", model_folder_name)
     assert isdir(model_folder_name), (
