@@ -45,12 +45,12 @@ def preprocess_save_to_queue(
                 continue
 
             # Check if metadata is loaded correctly
-            if dct is None:
+            if m is None:
                 print(f"Error: Failed to load metadata for {output_file}")
                 errors_in.append(output_file)
                 continue
             
-            print(f"Loaded data shape: {d.shape}, metadata: {dct}")
+            print(f"Loaded data shape: {d.shape}, metadata: {m.shape}")
 
             if segs_from_prev_stage[i] is not None:
                 assert isfile(segs_from_prev_stage[i]) and segs_from_prev_stage[i].endswith(".nii.gz"), (
@@ -70,7 +70,7 @@ def preprocess_save_to_queue(
                 print("This output is too large for python process-process communication. Saving output temporarily to disk")
                 np.save(output_file[:-7] + ".npy", d)
                 d = output_file[:-7] + ".npy"
-            q.put((output_file, (d, dct)))
+            q.put((output_file, (d, m, dct)))
         except Exception as e:
             print(f"Exception occurred while processing {output_file}: {e}")
             errors_in.append(output_file)
@@ -161,7 +161,7 @@ def predict_cases(
 
     print("starting prediction...")
     for preprocessed in preprocessing:
-        output_filename, (d, dct) = preprocessed
+        output_filename, (d, m, dct) = preprocessed
         
         # Check if metadata and image are loaded correctly
         if d is None or dct is None:
@@ -172,6 +172,11 @@ def predict_cases(
             data = np.load(d)
             os.remove(d)
             d = data
+
+        if isinstance(m, str):
+            meta = np.load(m)
+            # os.remove(m)
+            m = meta
 
         all_softmax_outputs = np.zeros(
             (len(params), trainer.num_classes, *d.shape[1:]), dtype=np.float16
