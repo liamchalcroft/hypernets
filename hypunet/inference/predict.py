@@ -52,7 +52,8 @@ def preprocess_save_to_queue(
 
     errors_in = []
     for i, l in enumerate(list_of_lists):
-        try:
+        # try:
+        if True:
             output_file = output_files[i]
             print("preprocessing", output_file)
             d, _, dct = preprocess_fn(l)
@@ -95,11 +96,11 @@ def preprocess_save_to_queue(
                 np.save(output_file[:-7] + ".npy", d)
                 d = output_file[:-7] + ".npy"
             q.put((output_file, (d, dct)))
-        except KeyboardInterrupt:
-            raise KeyboardInterrupt
-        except Exception as e:
-            print("error in", l)
-            print(e)
+        # except KeyboardInterrupt:
+        #     raise KeyboardInterrupt
+        # except Exception as e:
+        #     print("error in", l)
+        #     print(e)
     q.put("end")
     if len(errors_in) > 0:
         print("There were some errors in the following cases:", errors_in)
