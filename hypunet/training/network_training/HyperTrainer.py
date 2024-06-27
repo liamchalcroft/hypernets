@@ -736,7 +736,7 @@ class HyperTrainer(HyperNetworkTrainer):
                 meta = meta.cuda()
             weights = self.hypernetwork.hyper(meta)
             self.hypernetwork._set_weights(
-                self.network, self.hypernetwork._make_chunks(weights[0])
+                self.network, self.hypernetwork._make_chunks(weights)
             )
 
         # Perform prediction
