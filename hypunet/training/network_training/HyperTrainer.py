@@ -731,7 +731,9 @@ class HyperTrainer(HyperNetworkTrainer):
 
         if self.hypernetwork is not None and self.hyper_depth is not None:
             if not isinstance(meta, torch.Tensor):
-                meta = torch.tensor(meta, dtype=torch.float32, device=self.network.device)
+                meta = torch.tensor(meta, dtype=torch.float32)
+            if torch.cuda.is_available():
+                meta = meta.cuda()
             weights = self.hypernetwork.hyper(meta)
             assert len(weights) == 1
             self.hypernetwork._set_weights(
