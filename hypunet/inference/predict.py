@@ -191,7 +191,7 @@ def predict_cases(
             trainer.load_checkpoint_ram(p, False)
             res = trainer.predict_preprocessed_data_return_seg_and_softmax(
                 d,
-                dct,
+                m,
                 do_mirroring=do_tta,
                 mirror_axes=trainer.data_aug_params["mirror_axes"],
                 use_sliding_window=True,
