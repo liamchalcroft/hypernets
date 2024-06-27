@@ -414,6 +414,8 @@ class HyperNetworkTrainer(object):
 
         new_state_dict = OrderedDict()
         if self.hyper_depth is not None:
+            if self.hypernetwork is None:
+                self.make_hypernet()
             curr_state_dict_keys = list(self.hypernetwork.state_dict().keys())
         else:
             curr_state_dict_keys = list(self.network.state_dict().keys())
