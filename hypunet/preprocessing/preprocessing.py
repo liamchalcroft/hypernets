@@ -427,9 +427,8 @@ class GenericPreprocessor(object):
             print(f"\nResampled data shape: {data.shape}, resampled seg shape: {seg.shape}")
 
             # If meta exists, define here
-            print(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy'))
-            if meta is None and os.path.exists(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy')):
-                meta = np.load(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy'))
+            if meta is None and os.path.exists(data_files[0].replace('imagesTs','metaTs').replace('_0000.nii.gz','.npy')):
+                meta = np.load(data_files[0].replace('imagesTs','metaTs').replace('_0000.nii.gz','.npy'))
                 print(f"\nLoaded meta: {meta.shape}")
 
             # Check if metadata is provided and return accordingly
