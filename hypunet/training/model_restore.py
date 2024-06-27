@@ -61,9 +61,10 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None, hyper_depth
     init = info["init"]
     name = info["name"]
     search_in = join(hypunet.__path__[0], "training", "network_training")
-    tr = recursive_find_python_class(
-        [search_in], name, current_module="hypunet.training.network_training"
-    )
+    # tr = recursive_find_python_class(
+    #     [search_in], name, current_module="hypunet.training.network_training"
+    # )
+    tr = HyperTrainer
 
     if tr is None:
         """
