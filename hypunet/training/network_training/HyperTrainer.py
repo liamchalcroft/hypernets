@@ -735,6 +735,7 @@ class HyperTrainer(HyperNetworkTrainer):
             if torch.cuda.is_available():
                 meta = meta.cuda()
             weights = self.hypernetwork.hyper(meta)
+            print(weights.shape)
             assert len(weights) == 1
             self.hypernetwork._set_weights(
                 self.network, self.hypernetwork._make_chunks(weights[0])
