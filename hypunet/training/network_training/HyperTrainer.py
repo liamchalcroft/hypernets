@@ -713,6 +713,7 @@ class HyperTrainer(HyperNetworkTrainer):
         # Debug: Print input shapes
         print(f"Input data shape: {data.shape}")
         if meta is not None:
+            print(f"Meta: {meta}")
             print(f"Input meta shape: {meta.shape}")
 
         if pad_border_mode == "constant" and pad_kwargs is None:
