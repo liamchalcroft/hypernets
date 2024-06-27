@@ -102,6 +102,9 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None, hyper_depth
     # ToDo Fabian make saves use kwargs, please...
 
     trainer = tr(*init, hyper_depth=hyper_depth, meta_dim=meta_dim)
+    trainer.hyper_depth = hyper_depth
+    trainer.meta_dim = meta_dim
+    trainer.initialize(False)
 
     # We can hack fp16 overwriting into the trainer without changing the init arguments because nothing happens with
     # fp16 in the init, it just saves it to a member variable
