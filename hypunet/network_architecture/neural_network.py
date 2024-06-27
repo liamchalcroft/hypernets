@@ -966,8 +966,6 @@ class SegmentationNetwork(NeuralNetwork):
                 lb_y = y
                 ub_y = y + patch_size[1]
 
-                print(f"Processing patch: x=({lb_x}, {ub_x}), y=({lb_y}, {ub_y})")
-
                 predicted_patch = self._internal_maybe_mirror_and_pred_2D(
                     data[None, :, lb_x:ub_x, lb_y:ub_y],
                     mirror_axes,
@@ -980,14 +978,10 @@ class SegmentationNetwork(NeuralNetwork):
                 else:
                     predicted_patch = predicted_patch.cpu().numpy()
 
-                print(f"Predicted patch shape: {predicted_patch.shape}")
-
                 aggregated_results[:, lb_x:ub_x, lb_y:ub_y] += predicted_patch
                 aggregated_nb_of_predictions[
                     :, lb_x:ub_x, lb_y:ub_y
                 ] += add_for_nb_of_preds
-
-                print(f"Updated aggregated results and number of predictions for patch: x=({lb_x}, {ub_x}), y=({lb_y}, {ub_y})")
 
         # we reverse the padding here (remeber that we padded the input to be at least as large as the patch size
         slicer = tuple(

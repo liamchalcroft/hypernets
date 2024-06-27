@@ -49,7 +49,6 @@ def preprocess_save_to_queue(
                 errors_in.append(output_file)
                 continue
             
-            print(f"Loaded data shape: {d.shape}, metadata: {m.shape}")
 
             if segs_from_prev_stage[i] is not None:
                 assert isfile(segs_from_prev_stage[i]) and segs_from_prev_stage[i].endswith(".nii.gz"), (
@@ -163,7 +162,6 @@ def predict_cases(
     pool = Pool(num_threads_nifti_save)  # Add this line to define the pool
     for preprocessed in preprocessing:
         output_filename, (d, m, dct) = preprocessed
-        print(f"\n\nOUTPUT FILENAME: {output_filename}")
         
         # Check if metadata and image are loaded correctly
         if d is None:
@@ -174,8 +172,6 @@ def predict_cases(
             print(f"Error: Failed to load metadata for {output_filename}")
             continue
 
-        print(f"Loaded data shape: {d.shape}, metadata: {m.shape}")
-
         if isinstance(d, str):
             print(f"Loading data from temporary file {d}")
             d = np.load(d)
@@ -184,10 +180,8 @@ def predict_cases(
             (len(params), trainer.num_classes, *d.shape[1:]), dtype=np.float16
         )
         all_seg_outputs = np.zeros((len(params), *d.shape[1:]), dtype=int)
-        print(f"predicting {output_filename}")
 
         for i, p in enumerate(params):
-            print(f"Loading checkpoint {i+1}/{len(params)}")
             trainer.load_checkpoint_ram(p, False)
             res = trainer.predict_preprocessed_data_return_seg_and_softmax(
                 d,
@@ -209,21 +203,17 @@ def predict_cases(
         else:
             seg = all_seg_outputs[0]
 
-        print("applying transpose_backward")
         transpose_forward = trainer.plans.get("transpose_forward")
         if transpose_forward is not None:
             transpose_backward = trainer.plans.get("transpose_backward")
             seg = seg.transpose([i for i in transpose_backward])
 
-        print("initializing segmentation export")
         results.append(
             pool.starmap_async(
                 save_segmentation_nifti, ((seg, output_filename, dct, 0, None),)
             )
         )
-        print(f"done with {output_filename}")
 
-    print("inference done. Now waiting for the segmentation export to finish...")
     _ = [i.get() for i in results]
 
     if not disable_postprocessing:

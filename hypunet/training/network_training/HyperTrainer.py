@@ -710,10 +710,6 @@ class HyperTrainer(HyperNetworkTrainer):
         """
         This function predicts the segmentation and softmax output for preprocessed data.
         """
-        # Debug: Print input shapes
-        print(f"Input data shape: {data.shape}")
-        if meta is not None:
-            print(f"Input meta shape: {meta.shape}")
 
         if pad_border_mode == "constant" and pad_kwargs is None:
             pad_kwargs = {"constant_values": 0}
@@ -727,32 +723,18 @@ class HyperTrainer(HyperNetworkTrainer):
                 "was done without mirroring"
             )
 
-        # Debug: Check network type
-        print(f"Network type: {type(self.network)}")
-
         valid = list((SegmentationNetwork, nn.DataParallel))
         assert isinstance(self.network, tuple(valid))
 
         current_mode = self.network.training
         self.network.eval()
 
-        # Debug: Check if hypernetwork is being used
-        print(f"Hypernetwork: {self.hypernetwork is not None}")
-        print(f"Hyper depth: {self.hyper_depth}")
-
         if self.hypernetwork is not None and self.hyper_depth is not None:
             weights = self.hypernetwork.hyper(meta)
             assert len(weights) == 1
-            # Debug: Print weight shape
-            print(f"Generated weights shape: {weights[0].shape}")
             self.hypernetwork._set_weights(
                 self.network, self.hypernetwork._make_chunks(weights[0])
             )
-
-        # Debug: Print prediction parameters
-        print(f"Mirroring: {do_mirroring}, Mirror axes: {mirror_axes}")
-        print(f"Sliding window: {use_sliding_window}, Step size: {step_size}")
-        print(f"Patch size: {self.patch_size}")
 
         # Perform prediction
         ret = self.network.predict_3D(
@@ -770,9 +752,6 @@ class HyperTrainer(HyperNetworkTrainer):
             verbose=verbose,
             mixed_precision=mixed_precision,
         )
-
-        # Debug: Print output shape
-        print(f"Output shape: {ret[0].shape}, {ret[1].shape}")
 
         self.network.train(current_mode)
         return ret
