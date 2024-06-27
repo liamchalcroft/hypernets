@@ -413,7 +413,7 @@ class GenericPreprocessor(object):
             data, seg, properties = ImageCropper.crop_from_list_of_files(
                 data_files, seg_file
             )
-            print(f"\nLoaded data shape: {data.shape}, seg shape: {seg.shape}, properties: {properties}")
+            print(f"\nLoaded data shape: {data.shape}, seg shape: {seg.shape}")
 
             # Transpose data and segmentation
             data = data.transpose((0, *[i + 1 for i in self.transpose_forward]))
@@ -424,7 +424,7 @@ class GenericPreprocessor(object):
             data, seg, properties = self.resample_and_normalize(
                 data, target_spacing, properties, seg, force_separate_z=force_separate_z
             )
-            print(f"\nResampled data shape: {data.shape}, resampled seg shape: {seg.shape}, properties: {properties}")
+            print(f"\nResampled data shape: {data.shape}, resampled seg shape: {seg.shape}")
 
             # If meta exists, define here
             if meta is None and os.path.exists(data_files[0].replace('imagesTs','metaTs').replace('.nii.gz','.npy')):
