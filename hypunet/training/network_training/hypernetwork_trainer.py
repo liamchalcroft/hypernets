@@ -427,6 +427,11 @@ class HyperNetworkTrainer(object):
                 key = key.partition("_orig_mod.")[2]
             if key not in curr_state_dict_keys and key.startswith("module."):
                 key = key.partition("module.")[2]
+            # If the key still doesn't match, try to find a matching key
+            if key not in curr_state_dict_keys:
+                possible_key = [ck for ck in curr_state_dict_keys if ck.endswith(key)]
+                if possible_key:
+                    key = possible_key[0]
             new_state_dict[key] = value
 
         if self.fp16:
@@ -439,6 +444,7 @@ class HyperNetworkTrainer(object):
             self.hypernetwork.load_state_dict(new_state_dict)
         else:
             self.network.load_state_dict(new_state_dict)
+
         self.epoch = checkpoint["epoch"]
         if train:
             optimizer_state_dict = checkpoint["optimizer_state_dict"]
