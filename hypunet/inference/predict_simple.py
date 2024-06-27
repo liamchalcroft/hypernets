@@ -45,6 +45,22 @@ def main():
         required=True,
     )
     parser.add_argument(
+        "-hyper",
+        "--hyper_depth",
+        help="Encoder depth to control with hypernetworks",
+        type=int,
+        default=None,
+        required=False,
+    )
+    parser.add_argument(
+        "-meta",
+        "--meta_dim",
+        help="Dimensions of metadata for hypernetworks.",
+        type=int,
+        default=None,
+        required=False,
+    )
+    parser.add_argument(
         "-o", "--output_folder", required=True, help="folder for saving predictions"
     )
     parser.add_argument(
@@ -289,6 +305,8 @@ def main():
         mixed_precision=not args.disable_mixed_precision,
         step_size=step_size,
         checkpoint_name=args.chk,
+        hyper_depth=args.hyper_depth,
+        meta_dim=args.meta_dim,
     )
 
 

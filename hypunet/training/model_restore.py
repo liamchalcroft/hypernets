@@ -45,7 +45,7 @@ def recursive_find_python_class(folder, trainer_name, current_module):
     return tr
 
 
-def restore_model(pkl_file, checkpoint=None, train=False, fp16=None):
+def restore_model(pkl_file, checkpoint=None, train=False, fp16=None, hyper_depth=None, meta_dim=None):
     """
     This is a utility function to load any hypunet trainer from a pkl. It will recursively search
     hypunet.trainig.network_training for the file that contains the trainer and instantiate it with the arguments saved in the pkl file. If checkpoint
@@ -101,7 +101,7 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None):
 
     # ToDo Fabian make saves use kwargs, please...
 
-    trainer = tr(*init)
+    trainer = tr(*init, hyper_depth=hyper_depth, meta_dim=meta_dim)
 
     # We can hack fp16 overwriting into the trainer without changing the init arguments because nothing happens with
     # fp16 in the init, it just saves it to a member variable
@@ -121,7 +121,7 @@ def load_best_model_for_inference(folder):
 
 
 def load_model_and_checkpoint_files(
-    folder, folds=None, mixed_precision=None, checkpoint_name="model_best"
+    folder, folds=None, mixed_precision=None, checkpoint_name="model_best", hyper_depth=None, meta_dim=None
 ):
     """
     used for if you need to ensemble the five models of a cross-validation. This will restore the model from the
@@ -163,7 +163,7 @@ def load_model_and_checkpoint_files(
         )
 
     trainer = restore_model(
-        join(folds[0], "%s.model.pkl" % checkpoint_name), fp16=mixed_precision
+        join(folds[0], "%s.model.pkl" % checkpoint_name), fp16=mixed_precision, hyper_depth=hyper_depth, meta_dim=meta_dim
     )
     trainer.output_folder = folder
     trainer.output_folder_base = folder

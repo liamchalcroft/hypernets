@@ -139,13 +139,15 @@ def predict_cases(
     checkpoint_name="model_final_checkpoint",
     segmentation_export_kwargs: dict = None,
     disable_postprocessing: bool = False,
+    hyper_depth: int = None,
+    meta_dim: int = None,
 ):
     print("emptying cuda cache")
     torch.cuda.empty_cache()
 
     print("loading parameters for folds,", folds)
     trainer, params = load_model_and_checkpoint_files(
-        model, folds, mixed_precision=mixed_precision, checkpoint_name=checkpoint_name
+        model, folds, mixed_precision=mixed_precision, checkpoint_name=checkpoint_name, hyper_depth=hyper_depth, meta_dim=meta_dim
     )
 
     print("starting preprocessing generator")
@@ -287,6 +289,8 @@ def predict_from_folder(
     checkpoint_name: str = "model_final_checkpoint",
     segmentation_export_kwargs: dict = None,
     disable_postprocessing: bool = False,
+    hyper_depth: int = None,
+    meta_dim: int = None,
 ):
     maybe_mkdir_p(output_folder)
     shutil.copy(join(model, "plans.pkl"), output_folder)
@@ -335,6 +339,8 @@ def predict_from_folder(
             checkpoint_name=checkpoint_name,
             segmentation_export_kwargs=segmentation_export_kwargs,
             disable_postprocessing=disable_postprocessing,
+            hyper_depth=hyper_depth,
+            meta_dim=meta_dim,
         )
     elif mode == "fast":
         if overwrite_all_in_gpu is None:
@@ -359,6 +365,8 @@ def predict_from_folder(
             checkpoint_name=checkpoint_name,
             segmentation_export_kwargs=segmentation_export_kwargs,
             disable_postprocessing=disable_postprocessing,
+            hyper_depth=hyper_depth,
+            meta_dim=meta_dim,
         )
     elif mode == "fastest":
         if overwrite_all_in_gpu is None:
@@ -382,6 +390,8 @@ def predict_from_folder(
             step_size=step_size,
             checkpoint_name=checkpoint_name,
             disable_postprocessing=disable_postprocessing,
+            hyper_depth=hyper_depth,
+            meta_dim=meta_dim,
         )
     else:
         raise ValueError("unrecognized mode. Must be normal, fast or fastest")
