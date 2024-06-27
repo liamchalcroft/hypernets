@@ -73,7 +73,7 @@ def save_segmentation_nifti_from_softmax(
     :return:
     """
     if verbose:
-        print("force_separate_z:", force_separate_z, "interpolation order:", order)
+        print("\nforce_separate_z:", force_separate_z, "interpolation order:", order)
 
     if isinstance(segmentation_softmax, str):
         assert isfile(segmentation_softmax), (
@@ -127,7 +127,7 @@ def save_segmentation_nifti_from_softmax(
             do_separate_z = False
 
         if verbose:
-            print("separate z:", do_separate_z, "lowres axis", lowres_axis)
+            print("\nseparate z:", do_separate_z, "lowres axis", lowres_axis)
         seg_old_spacing = resample_data_or_seg(
             segmentation_softmax,
             shape_original_after_cropping,
@@ -140,7 +140,7 @@ def save_segmentation_nifti_from_softmax(
         # seg_old_spacing = resize_softmax_output(segmentation_softmax, shape_original_after_cropping, order=order)
     else:
         if verbose:
-            print("no resampling necessary")
+            print("\nno resampling necessary")
         seg_old_spacing = segmentation_softmax
 
     if resampled_npz_fname is not None:
@@ -220,7 +220,7 @@ def save_segmentation_nifti(
     :return:
     """
     # suppress output
-    print("force_separate_z:", force_separate_z, "interpolation order:", order)
+    print("\nforce_separate_z:", force_separate_z, "interpolation order:", order)
     if not verbose:
         sys.stdout = open(os.devnull, "w")
 
@@ -247,7 +247,7 @@ def save_segmentation_nifti(
             seg_old_spacing = resize_segmentation(
                 segmentation, shape_original_after_cropping, 0
             )
-            print("Resized segmentation with order 0")
+            print("\nResized segmentation with order 0")
         else:
             if force_separate_z is None:
                 if get_do_separate_z(dct.get("original_spacing")):
@@ -266,7 +266,7 @@ def save_segmentation_nifti(
                 else:
                     lowres_axis = None
 
-            print("separate z:", do_separate_z, "lowres axis", lowres_axis)
+            print("\nseparate z:", do_separate_z, "lowres axis", lowres_axis)
             seg_old_spacing = resample_data_or_seg(
                 segmentation[None],
                 shape_original_after_cropping,
@@ -276,10 +276,10 @@ def save_segmentation_nifti(
                 do_separate_z=do_separate_z,
                 order_z=order_z,
             )[0]
-            print("Resampled segmentation")
+            print("\nResampled segmentation")
     else:
         seg_old_spacing = segmentation
-        print("No resampling necessary")
+        print("\nNo resampling necessary")
 
     bbox = dct.get("crop_bbox")
     print(f"Bounding box: {bbox}")
@@ -296,10 +296,10 @@ def save_segmentation_nifti(
         seg_old_size[
             bbox[0][0] : bbox[0][1], bbox[1][0] : bbox[1][1], bbox[2][0] : bbox[2][1]
         ] = seg_old_spacing
-        print("Applied bounding box to segmentation")
+        print("\nApplied bounding box to segmentation")
     else:
         seg_old_size = seg_old_spacing
-        print("No bounding box applied")
+        print("\nNo bounding box applied")
 
     seg_resized_itk = sitk.GetImageFromArray(seg_old_size.astype(np.uint8))
     seg_resized_itk.SetSpacing(dct["itk_spacing"])
