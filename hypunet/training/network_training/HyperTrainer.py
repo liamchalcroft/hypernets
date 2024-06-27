@@ -730,6 +730,8 @@ class HyperTrainer(HyperNetworkTrainer):
         self.network.eval()
 
         if self.hypernetwork is not None and self.hyper_depth is not None:
+            if not isinstance(meta, torch.Tensor):
+                meta = torch.tensor(meta, dtype=torch.float32, device=self.network.device)
             weights = self.hypernetwork.hyper(meta)
             assert len(weights) == 1
             self.hypernetwork._set_weights(
