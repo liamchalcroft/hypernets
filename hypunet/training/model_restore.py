@@ -60,6 +60,9 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None, hyper_depth
     info = load_pickle(pkl_file)
     init = info["init"]
     name = info["name"]
+    print(f"Loaded .pkl with keys: {info.keys()}")
+    print(f"Restoring model with name: {name}")
+    print(f"Restoring model with init: {init}")
     search_in = join(hypunet.__path__[0], "training", "network_training")
     tr = recursive_find_python_class(
         [search_in], name, current_module="hypunet.training.network_training"
