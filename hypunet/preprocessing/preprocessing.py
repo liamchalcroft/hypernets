@@ -423,8 +423,12 @@ class GenericPreprocessor(object):
             )
 
             # If meta exists, define here
-            if meta is None and os.path.exists(data_files[0].replace('imagesTs','metaTs').replace('_0000.nii.gz','.npy')):
-                meta = np.load(data_files[0].replace('imagesTs','metaTs').replace('_0000.nii.gz','.npy'))
+            if meta is None:
+                if os.path.exists(data_files[0].replace('imagesTs','metaTs').replace('_0000.nii.gz','.npy')):
+                    meta = np.load(data_files[0].replace('imagesTs','metaTs').replace('_0000.nii.gz','.npy'))
+                if os.path.exists(data_files[0].replace('imagesTr','metaTr').replace('_0000.nii.gz','.npy')):
+                    meta = np.load(data_files[0].replace('imagesTr','metaTr').replace('_0000.nii.gz','.npy'))
+            
 
             # Check if metadata is provided and return accordingly
             if meta is not None:
