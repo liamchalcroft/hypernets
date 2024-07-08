@@ -210,6 +210,10 @@ def predict_cases(
             transpose_backward = trainer.plans.get("transpose_backward")
             seg = seg.transpose([i for i in transpose_backward])
 
+        print(f"\nSeg shape: {seg.shape}")
+        print(f"Output filename: {output_filename}")
+        print(f"DCT: {dct}")
+
         results.append(
             pool.starmap_async(
                 save_segmentation_nifti, ((seg, output_filename, dct, 0, None),)
