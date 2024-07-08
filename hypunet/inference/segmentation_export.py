@@ -220,6 +220,7 @@ def save_segmentation_nifti(
     :return:
     """
     # suppress output
+    print("\nforce_separate_z:", force_separate_z, "interpolation order:", order)
     if not verbose:
         sys.stdout = open(os.devnull, "w")
 
@@ -231,17 +232,22 @@ def save_segmentation_nifti(
         del_file = deepcopy(segmentation)
         segmentation = np.load(segmentation)
         os.remove(del_file)
+        print(f"Loaded segmentation from {del_file}")
 
     # first resample, then put result into bbox of cropping, then save
     current_shape = segmentation.shape
     shape_original_after_cropping = dct.get("size_after_cropping")
     shape_original_before_cropping = dct.get("original_size_of_raw_data")
+    print(f"Current shape: {current_shape}")
+    print(f"Shape after cropping: {shape_original_after_cropping}")
+    print(f"Shape before cropping: {shape_original_before_cropping}")
 
     if np.any(np.array(current_shape) != np.array(shape_original_after_cropping)):
         if order == 0:
             seg_old_spacing = resize_segmentation(
                 segmentation, shape_original_after_cropping, 0
             )
+            print("\nResized segmentation with order 0")
         else:
             if force_separate_z is None:
                 if get_do_separate_z(dct.get("original_spacing")):
@@ -260,6 +266,7 @@ def save_segmentation_nifti(
                 else:
                     lowres_axis = None
 
+            print("\nseparate z:", do_separate_z, "lowres axis", lowres_axis)
             seg_old_spacing = resample_data_or_seg(
                 segmentation[None],
                 shape_original_after_cropping,
@@ -269,10 +276,13 @@ def save_segmentation_nifti(
                 do_separate_z=do_separate_z,
                 order_z=order_z,
             )[0]
+            print("\nResampled segmentation")
     else:
         seg_old_spacing = segmentation
+        print("\nNo resampling necessary")
 
     bbox = dct.get("crop_bbox")
+    print(f"Bounding box: {bbox}")
 
     if bbox is not None:
         seg_old_size = np.zeros(shape_original_before_cropping)
@@ -286,14 +296,17 @@ def save_segmentation_nifti(
         seg_old_size[
             bbox[0][0] : bbox[0][1], bbox[1][0] : bbox[1][1], bbox[2][0] : bbox[2][1]
         ] = seg_old_spacing
+        print("\nApplied bounding box to segmentation")
     else:
         seg_old_size = seg_old_spacing
+        print("\nNo bounding box applied")
 
     seg_resized_itk = sitk.GetImageFromArray(seg_old_size.astype(np.uint8))
     seg_resized_itk.SetSpacing(dct["itk_spacing"])
     seg_resized_itk.SetOrigin(dct["itk_origin"])
     seg_resized_itk.SetDirection(dct["itk_direction"])
     sitk.WriteImage(seg_resized_itk, out_fname)
+    print(f"Segmentation saved to {out_fname}")
 
     if not verbose:
         sys.stdout = sys.__stdout__
